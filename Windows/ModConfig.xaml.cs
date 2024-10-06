@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Reflection;
 using System.Windows.Shapes;
+using System.Security.Cryptography.X509Certificates;
 
 
 namespace AemulusModManager
@@ -38,13 +39,15 @@ namespace AemulusModManager
         public class ModConfigPath
         {
             public string modpath { get; set; }
-
             public ModConfigPath(ConfigMetadata mm)
             {
-                Utilities.ParallelLogger.Log($"[ERROR] mm.modgame is set to {mm.modgame}.");
-                Utilities.ParallelLogger.Log($"[ERROR] mm.modpath is set to {mm.modpath}.");
-                modpath = $@"{System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Packages\{mm.modgame}\{mm.modpath}\";
-                Utilities.ParallelLogger.Log($"[ERROR] Before leaving the ModConfigPath, path is set to {modpath}.");
+                if (mm != null)
+                {
+                    Utilities.ParallelLogger.Log($"[ERROR] mm.modgame is set to {mm.modgame}.");
+                    Utilities.ParallelLogger.Log($"[ERROR] mm.modpath is set to {mm.modpath}.");
+                    modpath = $@"{System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Packages\{mm.modgame}\{mm.modpath}\";
+                    Utilities.ParallelLogger.Log($"[ERROR] Before leaving the ModConfigPath, path is set to {modpath}.");
+                }
             }
         }
 

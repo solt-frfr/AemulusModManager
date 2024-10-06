@@ -3220,6 +3220,7 @@ namespace AemulusModManager
                     mm.modgame = game;
                     mm.modpath = row.path;
                     ModConfig mcfg = new ModConfig(mm);
+                    new ModConfig.ModConfigPath(mm);
                     mcfg.ShowDialog();
                 }
                 else
