@@ -2695,6 +2695,12 @@ namespace AemulusModManager
                             tblPatch.Patch(packages, path, useCpk, tbllanguage, game);
                         }
 
+                        // Only run if mod configuration options exist
+                        if (packages.Exists(x => Directory.Exists($@"{x}\modconfig")))
+                        {
+                            
+                        }
+
                         if (game == "Persona 3 FES" && packages.Exists(x => Directory.Exists($@"{x}\cheats")))
                         {
                             if (config.p3fConfig.cheatsPath != null && Directory.Exists(config.p3fConfig.cheatsPath))
@@ -3197,7 +3203,35 @@ namespace AemulusModManager
             updateConfig();
             updatePackages();
         }
+        public class ModDir
+        {
 
+        }
+        private void ConfigItem_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (var item in ModGrid.SelectedItems)
+            {
+                DisplayedMetadata row = (DisplayedMetadata)item;
+                if (row != null && File.Exists($@"{Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Packages\{game}\{row.path}\Package.xml"))
+                {
+                    ConfigMetadata mm = new ConfigMetadata();
+                    
+                    mm.name = row.name;
+                    mm.modgame = game;
+                    mm.modpath = row.path;
+                    ModConfig mcfg = new ModConfig(mm);
+                    mcfg.ShowDialog();
+                }
+                else
+                {
+                    Utilities.ParallelLogger.Log($@"[ERROR] Something went wrong. The mod doesn't have a Package.xml file.)");
+                }
+            }
+
+            Refresh();
+            updateConfig();
+            updatePackages();
+        }
         private async void ZipItem_Click(object sender, RoutedEventArgs e)
         {
             foreach (var item in ModGrid.SelectedItems)

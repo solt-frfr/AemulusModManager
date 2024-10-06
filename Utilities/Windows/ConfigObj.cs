@@ -274,6 +274,26 @@ namespace AemulusModManager
         public string skippedVersion { get; set; }
     }
 
+    public class ConfigMetadata
+    {
+        public string name { get; set; }
+        public string modpath { get; set; }
+        public string modgame { get; set; }
+        public string optionname { get; set; }
+        public string choice1 { get; set; }
+        public string choice2 { get; set; }
+        public string choice3 { get; set; }
+        public string choice4 { get; set; }
+        public string choice5 { get; set; }
+        public string choice6 { get; set; }
+        public string choice7 { get; set; }
+        public string choice8 { get; set; }
+        public string choice9 { get; set; }
+        public string choice0 { get; set; }
+        public string choicenull { get; set; }
+        public string description { get; set; }
+    }
+
     [Serializable, XmlRoot("Mod")]
     public class ModXmlMetadata
     {
