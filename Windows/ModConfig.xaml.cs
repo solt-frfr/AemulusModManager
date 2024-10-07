@@ -32,8 +32,8 @@ namespace AemulusModManager
             if (mm != null)
             {
                 Title = $"Edit {mm.name} Configuration Options";
-                Utilities.ParallelLogger.Log($"[ERROR] Within ModConfig, mm.modgame is set to {mm.modgame}.");
-                Utilities.ParallelLogger.Log($"[ERROR] Within ModConfig, mm.modpath is set to {mm.modpath}.");
+                Utilities.ParallelLogger.Log($"[DEBUG] Message 1: Within ModConfig, mm.modgame is set to {mm.modgame}.");
+                Utilities.ParallelLogger.Log($"[DEBUG] Message 2: Within ModConfig, mm.modpath is set to {mm.modpath}.");
             }
         }
         public class ModConfigPath
@@ -43,10 +43,10 @@ namespace AemulusModManager
             {
                 if (mm != null)
                 {
-                    Utilities.ParallelLogger.Log($"[ERROR] mm.modgame is set to {mm.modgame}.");
-                    Utilities.ParallelLogger.Log($"[ERROR] mm.modpath is set to {mm.modpath}.");
+                    Utilities.ParallelLogger.Log($"[DEBUG] Message 3: mm.modgame is set to {mm.modgame}.");
+                    Utilities.ParallelLogger.Log($"[DEBUG] Message 4: mm.modpath is set to {mm.modpath}.");
                     modpath = $@"{System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Packages\{mm.modgame}\{mm.modpath}\";
-                    Utilities.ParallelLogger.Log($"[ERROR] Before leaving the ModConfigPath, path is set to {modpath}.");
+                    Utilities.ParallelLogger.Log($"[DEBUG] Message 5: Before leaving the ModConfigPath, path is set to {modpath}.");
                 }
             }
         }
@@ -74,14 +74,14 @@ namespace AemulusModManager
             string path = config.modpath;
             if (!Directory.Exists(path))
             {
-                Utilities.ParallelLogger.Log($"[ERROR] path is set to {path}.");
+                Utilities.ParallelLogger.Log($"[DEBUG] Message 6: path is set to {path}.");
                 File.Create($"{path}/Test.txt").Dispose();
                 Close();
             }
             else
             {
-                Utilities.ParallelLogger.Log($"[ERROR] path is set to {path}.");
-                Utilities.ParallelLogger.Log($"[ERROR] Failed.");
+                Utilities.ParallelLogger.Log($"[DEBUG] Message 7: path is set to {path}.");
+                Utilities.ParallelLogger.Log($"[ERROR] Could not find the mod path. It's likely the variable got cleared again.");
                 Close();
             }
         }
