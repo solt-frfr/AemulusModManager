@@ -19,39 +19,21 @@ namespace AemulusModManager
     /// </summary>
     public partial class ModConfig : Window
     {
-        public Metadata metadata;
+        public ConfigMetadata cfgmetadata;
         public string thumbnailPath;
-        private bool focused = false;
-        private bool edited = false;
-        private bool editing = false;
-        private string skippedVersion = "";
 
         public ModConfig(ConfigMetadata mm)
         {
             InitializeComponent();
             if (mm != null)
             {
+                cfgmetadata = mm;
                 Title = $"Edit {mm.name} Configuration Options";
                 Utilities.ParallelLogger.Log($"[DEBUG] Message 1: Within ModConfig, mm.modgame is set to {mm.modgame}.");
                 Utilities.ParallelLogger.Log($"[DEBUG] Message 2: Within ModConfig, mm.modpath is set to {mm.modpath}.");
             }
         }
-        public class ModConfigPath
-        {
-            public string modpath { get; set; }
-            public ModConfigPath(ConfigMetadata mm)
-            {
-                if (mm != null)
-                {
-                    Utilities.ParallelLogger.Log($"[DEBUG] Message 3: mm.modgame is set to {mm.modgame}.");
-                    Utilities.ParallelLogger.Log($"[DEBUG] Message 4: mm.modpath is set to {mm.modpath}.");
-                    modpath = $@"{System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Packages\{mm.modgame}\{mm.modpath}\";
-                    Utilities.ParallelLogger.Log($"[DEBUG] Message 5: Before leaving the ModConfigPath, path is set to {modpath}.");
-                }
-            }
-        }
-
-            private void OptionNameBox_TextChanged(object sender, TextChangedEventArgs e)
+        private void OptionNameBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (!string.IsNullOrWhiteSpace(OptionNameBox.Text))
                 CreateButton.IsEnabled = true;
@@ -68,20 +50,23 @@ namespace AemulusModManager
         }
         private void CreateButton_Click(object sender, RoutedEventArgs e)
         {
-            metadata = new Metadata();
-            ConfigMetadata mm = new ConfigMetadata(); // Look I'll be fully honest I'm not a great coder, whatever works works, I barely know what I'm doing so if this is bad feel free to correct me. Sincerely, Solt11.
-            ModConfigPath config = new ModConfigPath(mm);
-            string path = config.modpath;
-            if (!Directory.Exists(path))
+            // Look I'll be fully honest I'm not a great coder, whatever works works, I barely know what I'm doing so if this is bad feel free to correct me. Sincerely, Solt11.
+            string path = $@"{System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Packages\{cfgmetadata.modgame}\{cfgmetadata.modpath}";
+            if (path != $@"{System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Packages\\")
             {
                 Utilities.ParallelLogger.Log($"[DEBUG] Message 6: path is set to {path}.");
                 File.Create($"{path}/Test.txt").Dispose();
                 Close();
             }
+            else if (path == null)
+            {
+                Utilities.ParallelLogger.Log($"[ERROR] The path was not set.");
+                Close();
+            }
             else
             {
                 Utilities.ParallelLogger.Log($"[DEBUG] Message 7: path is set to {path}.");
-                Utilities.ParallelLogger.Log($"[ERROR] Could not find the mod path. It's likely the variable got cleared again.");
+                Utilities.ParallelLogger.Log($"[ERROR] Failed to grab the mod metadata.");
                 Close();
             }
         }
@@ -99,16 +84,6 @@ namespace AemulusModManager
             }
             // Bring Mod Config window back to foreground after closing dialog
             this.Activate();
-        }
-        public class Test
-        {
-            public void TestMethod()
-            {
-                ConfigMetadata mm = new ConfigMetadata(); // Assume this is instantiated properly
-                ModConfigPath config = new ModConfigPath(mm);  // Create an instance of ModConfig
-                string path = config.modpath;  // Access the non-static modpath field through the instance
-                Console.WriteLine("ModPath: " + path);
-            }
         }
     }
 }

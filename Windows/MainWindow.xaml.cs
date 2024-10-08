@@ -3203,10 +3203,6 @@ namespace AemulusModManager
             updateConfig();
             updatePackages();
         }
-        public class ModDir
-        {
-
-        }
         private void ConfigItem_Click(object sender, RoutedEventArgs e)
         {
             foreach (var item in ModGrid.SelectedItems)
@@ -3220,7 +3216,6 @@ namespace AemulusModManager
                     mm.modgame = game;
                     mm.modpath = row.path;
                     ModConfig mcfg = new ModConfig(mm);
-                    new ModConfig.ModConfigPath(mm);
                     mcfg.ShowDialog();
                 }
                 else
