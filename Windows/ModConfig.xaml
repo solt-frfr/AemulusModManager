@@ -51,12 +51,14 @@
                 <ColumnDefinition/>
                 <ColumnDefinition/>
                 <ColumnDefinition/>
+                <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <Button Name="CreateButton" Click="CreateButton_Click" IsEnabled="False" Background="#202020" BorderBrush="#424242" Foreground="#f2f2f2" Height="25" Width="75"  Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Left">Confirm</Button>
-            <Button Name="CancelButton" Click="CancelButton_Click" Background="#202020" BorderBrush="#424242" Foreground="#f2f2f2" Height="25" Width="75" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left">Cancel</Button>
-            <Button Name="NextButton" Click="NextButton_Click" Background="#202020" BorderBrush="#424242" Foreground="#f2f2f2" Height="25" Width="75" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left">Next</Button>
+            <Button Name="CreateButton" Click="CreateButton_Click" IsEnabled="False" Background="#202020" BorderBrush="#424242" Foreground="#f2f2f2" Height="25" Width="75"  Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center">Confirm</Button>
+            <Button Name="CancelButton" Click="CancelButton_Click" Background="#202020" BorderBrush="#424242" Foreground="#f2f2f2" Height="25" Width="75" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Center">Cancel</Button>
+            <Button Name="NextButton" Click="NextButton_Click" IsEnabled="False" Background="#202020" BorderBrush="#424242" Foreground="#f2f2f2" Height="25" Width="75" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center">Next</Button>
+            <Button Name="BackButton" Click="BackButton_Click" IsEnabled="False" Background="#202020" BorderBrush="#424242" Foreground="#f2f2f2" Height="25" Width="75" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center">Back</Button>
         </Grid>
-        <Button Content="Add Choice" Grid.Row ="6" Grid.Column="1" Background="#202020" BorderBrush="#424242" Foreground="#f2f2f2" Height="25" Width="75" HorizontalAlignment="Left" VerticalAlignment="Center" Click="AddChoiceBox_Click" Margin="133,0,0,0"/>
+        <Button Content="Add Choice" Grid.Row ="6" Grid.Column="1" Background="#202020" BorderBrush="#424242" Foreground="#f2f2f2" Height="25" Width="75" HorizontalAlignment="Center" VerticalAlignment="Center" Click="AddChoiceBox_Click"/>
         <Grid Grid.Row="9" Grid.Column="1">
             <StackPanel x:Name="TextBoxContainer" VerticalAlignment="Top">
                 <!-- TextBox controls will be added here dynamically -->
