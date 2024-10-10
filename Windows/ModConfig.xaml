@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Background="#121212"
         ResizeMode="NoResize" WindowStartupLocation="CenterOwner"
-        Title="Edit Mod Configuration" Height="352" Width="500">
+        Title="Edit Mod Configuration" Width="500">
     <Grid Margin="0,0,0,7">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="100"/>
@@ -16,32 +16,29 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="33"/>
             <RowDefinition Height="33"/>
-            <RowDefinition Height="33"/>
-            <RowDefinition Height="33"/>
-            <RowDefinition Height="33"/>
             <RowDefinition Height="5"/>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="5"/>
             <RowDefinition Height="33"/>
             <RowDefinition Height="33"/>
+            <RowDefinition Height="33"/>
+            <RowDefinition Height="33"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="33"/>
             <RowDefinition Height="5"/>
         </Grid.RowDefinitions>
         <Image Name="Preview" Width="350" Stretch="Uniform" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="1" Grid.ColumnSpan="2"/>
-        <TextBlock Foreground="LightGray" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="15" FontWeight="Bold" Grid.Row="0" Grid.Column="0" Text="Option Name"/>
-        <TextBlock Foreground="LightGray" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="15" FontWeight="Bold" Grid.Row="1" Grid.Column="0" Text="Choice 1"/>
-        <TextBlock Foreground="LightGray" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="15" FontWeight="Bold" Grid.Row="2" Grid.Column="0" Text="Option 2"/>
-        <TextBlock Foreground="LightGray" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="15" FontWeight="Bold" Grid.Row="3" Grid.Column="0" Text="Option 3"/>
-        <TextBlock Foreground="LightGray" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="15" FontWeight="Bold" Grid.Row="4" Grid.Column="0" Text="Option 4"/>
-        <TextBlock Foreground="LightGray" VerticalAlignment="Top" Padding="2" HorizontalAlignment="Center" FontSize="15" FontWeight="Bold" Grid.Row="6" Grid.Column="0">Description</TextBlock>
-        <TextBlock Foreground="LightGray" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="15" FontWeight="Bold" Grid.Row="8" Grid.Column="0">Preview</TextBlock>
-        <TextBox Name="OptionNameBox" TextChanged="OptionNameBox_TextChanged" Background="#202020" BorderBrush="#424242" Foreground="#f2f2f2" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Width="365"></TextBox>
-        <TextBox Name="Choice1Box" Background="#202020" BorderBrush="#424242" Foreground="#f2f2f2" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Width="365"></TextBox>
-        <TextBox Name="Choice2Box" Background="#202020" BorderBrush="#424242" Foreground="#f2f2f2" Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Width="365"></TextBox>
-        <TextBox Name="Choice3Box" Background="#202020" BorderBrush="#424242" Foreground="#f2f2f2" Grid.Row="3" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Width="365"></TextBox>
-        <TextBox Name="Choice4Box" Background="#202020" BorderBrush="#424242" Foreground="#f2f2f2" Grid.Row="4" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Width="365"></TextBox>
-        <TextBox Name="DescBox" AcceptsReturn="True" AcceptsTab="True" Background="#202020" BorderBrush="#424242" Foreground="#f2f2f2" Grid.Row="6" Grid.Column="1" VerticalScrollBarVisibility="Auto" TextWrapping="WrapWithOverflow" VerticalAlignment="Top" Height="65" HorizontalAlignment="Left" Width="365"></TextBox>
+        <TextBox Name="PageBox" Background="#202020" BorderBrush="#424242" Foreground="#f2f2f2" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Width="80" IsEnabled="False" Margin="120,0,0,0"/>
+        <TextBlock Foreground="LightGray" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="15" FontWeight="Bold" Grid.Row="1" Grid.Column="0" Text="Option Name"/>
+        <TextBlock Foreground="LightGray" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="15" FontWeight="Bold" Grid.Row="7" Grid.Column="0" Text="Choices"/>
+        <TextBlock Foreground="LightGray" VerticalAlignment="Top" Padding="2" HorizontalAlignment="Center" FontSize="15" FontWeight="Bold" Grid.Row="3" Grid.Column="0">Description</TextBlock>
+        <TextBlock Foreground="LightGray" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="15" FontWeight="Bold" Grid.Row="5" Grid.Column="0">Preview</TextBlock>
+        <TextBox Name="OptionNameBox" TextChanged="OptionNameBox_TextChanged" Background="#202020" BorderBrush="#424242" Foreground="#f2f2f2" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Width="365"></TextBox>
+        <TextBox Name="Choice1Box" Background="#202020" BorderBrush="#424242" Foreground="#f2f2f2" Grid.Row="7" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Width="365"></TextBox>
+        <TextBox Name="Choice2Box" Background="#202020" BorderBrush="#424242" Foreground="#f2f2f2" Grid.Row="8" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Width="365"></TextBox>
+        <TextBox Name="DescBox" AcceptsReturn="True" AcceptsTab="True" Background="#202020" BorderBrush="#424242" Foreground="#f2f2f2" Grid.Row="3" Grid.Column="1" VerticalScrollBarVisibility="Auto" TextWrapping="WrapWithOverflow" VerticalAlignment="Top" Height="65" HorizontalAlignment="Left" Width="365"></TextBox>
 
-        <Grid Grid.Row="8" Grid.Column="1">
+        <Grid Grid.Row="5" Grid.Column="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
@@ -49,7 +46,7 @@
             <TextBox Name="PreviewBox" Background="#202020" BorderBrush="#424242" Foreground="#f2f2f2" IsReadOnly="True" Grid.Row="8" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Left" Width="290"></TextBox>
             <Button Name="PreviewButton" Click="PreviewButton_Click" Background="#202020" BorderBrush="#424242" Foreground="#f2f2f2" Grid.Row="8" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Width="75">Browse</Button>
         </Grid>
-        <Grid Grid.Row="9" Grid.Column="1">
+        <Grid Grid.Row="10" Grid.Column="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition/>
@@ -59,6 +56,12 @@
             <Button Name="CancelButton" Click="CancelButton_Click" Background="#202020" BorderBrush="#424242" Foreground="#f2f2f2" Height="25" Width="75" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left">Cancel</Button>
             <Button Name="NextButton" Click="NextButton_Click" Background="#202020" BorderBrush="#424242" Foreground="#f2f2f2" Height="25" Width="75" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left">Next</Button>
         </Grid>
-        
+        <Button Content="Add Choice" Grid.Row ="6" Grid.Column="1" Background="#202020" BorderBrush="#424242" Foreground="#f2f2f2" Height="25" Width="75" HorizontalAlignment="Left" VerticalAlignment="Center" Click="AddChoiceBox_Click" Margin="133,0,0,0"/>
+        <Grid Grid.Row="9" Grid.Column="1">
+            <StackPanel x:Name="TextBoxContainer" VerticalAlignment="Top">
+                <!-- TextBox controls will be added here dynamically -->
+            </StackPanel>
+        </Grid>
+
     </Grid>
 </Window>

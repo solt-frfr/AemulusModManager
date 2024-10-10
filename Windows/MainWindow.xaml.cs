@@ -3211,7 +3211,6 @@ namespace AemulusModManager
                 if (row != null && File.Exists($@"{Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Packages\{game}\{row.path}\Package.xml"))
                 {
                     ConfigMetadata mm = new ConfigMetadata();
-                    
                     mm.name = row.name;
                     mm.modgame = game;
                     mm.modpath = row.path;
