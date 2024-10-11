@@ -101,54 +101,58 @@ namespace AemulusModManager
         }
         private void NextButton_Click(object sender, RoutedEventArgs e)
         {
-            Height = 350;
-            configpage = configpage + 1;
+            // My code is kinda messy so I'll do my best to comment on what I'm pretty sure it does   -Solt11
+            Height = 350; // Reset the hight to the default
+            configpage = configpage + 1; // Set the page variable to the next
             PageBox.Text = $"Option {configpage}";
             Utilities.ParallelLogger.Log($@"[DEBUG] configpage = {configpage}");
-            if (configpage > 1)
+            if (configpage > 1) // Allows back button if the page isn't the first page (it shouldn't be but its always best to ensure)
                 BackButton.IsEnabled = true;
-            
-            if (choicenumber < 3)
-                choicenumber = 3;
+            if (choicenumber < 2) // Guarentees essentially that the number is valid before moving on, it'll get overwritten shortly
+                choicenumber = 2;
             string[] choice = new string[choicenumber];
-            for (int i = 0; i < choiceTextBoxes.Count; i++)
+            for (int i = 0; i < choiceTextBoxes.Count; i++) // Counts number of choices and stores it. It stores i - 1 because that was the last valid textbox
             {
                 choice[i] = choiceTextBoxes[i].Text;
                 if (string.IsNullOrEmpty(choice[i]))
                 {
                     choicenumber = i - 1;
+                    Utilities.ParallelLogger.Log($@"[DEBUG] {configpage - 1} was reported to have {choicenumber} choices.");
                     break;
                 }
             }
-            int index = configpage - 1;
-            if (index <= 0)
-                index = 1;
-            if (index - 1 >= 0 && index - 1 < storedpages.Count)
-                storedpages[index - 1] = new StoredPage(OptionNameBox.Text, choicenumber, DescBox.Text, PreviewBox.Text, choice);
+            int index = configpage - 1; // Local variable that I can use. Converts the current page to a number starting at 0 instead of 1.
+            if (index <= 0) // Double checks for validity because I've had so many problems ;m;
+                index = 0;
+            if (index - 1 >= 0 && index - 1 < storedpages.Count) // Checks to see if the page (before clicking next) is already stored somewhere.
+                storedpages[index - 1] = new StoredPage(OptionNameBox.Text, choicenumber, DescBox.Text, PreviewBox.Text, choice); // If yes, overwrite it.
             else
-                storedpages.Add(new StoredPage(OptionNameBox.Text, choicenumber, DescBox.Text, PreviewBox.Text, choice));
-            if (index + 1 >= 0 && index < storedpages.Count)
+                storedpages.Add(new StoredPage(OptionNameBox.Text, choicenumber, DescBox.Text, PreviewBox.Text, choice)); // If not, store and add it.
+            Utilities.ParallelLogger.Log($"[DEBUG] Stored to index {index - 1}");
+            choiceTextBoxes.Clear(); // Since it's now been stored, clear everything.
+            TextBoxContainer.Children.Clear();
+            choiceTextBoxes.Add(Choice1Box);
+            choiceTextBoxes.Add(Choice2Box);
+            if (index >= 0 && index < storedpages.Count) // If the data for this page exists, read it and set it to the text boxes.
             {
                 StoredPage nextpage = storedpages[index];
                 OptionNameBox.Text = nextpage.optionname1;
                 DescBox.Text = nextpage.description1;
                 PreviewBox.Text = nextpage.previewpath1;
+                if (nextpage.optionnum1 <= 2)
+                    nextpage.optionnum1 = 2;
+                choicenumber = nextpage.optionnum1;
                 // Debug
-                Utilities.ParallelLogger.Log($"[DEBUG] choiceTextBoxes.Count = {choiceTextBoxes.Count}, nextpage.optionnum1 = {nextpage.optionnum1}");
+                Utilities.ParallelLogger.Log($"[DEBUG] choiceTextBoxes.Count = {choiceTextBoxes.Count}, nextpage.optionnum1 = {nextpage.optionnum1}, nextpage pulled from index {index}");
 
-                choiceTextBoxes.Clear();
-                TextBoxContainer.Children.Clear();
-                choiceTextBoxes.Add(Choice1Box);
-                choiceTextBoxes.Add(Choice2Box);
-                if (nextpage.optionnum1 >= 2)
+                if (nextpage.optionnum1 >= 2) // If there was more than two options, add more textboxes.
                 {
-                    choicenumber = nextpage.optionnum1;
-                    for (int i = 3; i < nextpage.optionnum1; i++)
+                    for (int i = 3; i < nextpage.optionnum1; i++) // Starts at 3 because 1 and 2 already exist
                     {
                         System.Windows.Controls.TextBox newTextBox = new System.Windows.Controls.TextBox
                         {
                             Name = "Choice" + i + "Box",
-                            Text = nextpage.choice1[i - 1],
+                            Text = nextpage.choice1[i - 1], // These are stored starting at 0, so I have to use the one before it
                             Width = 365,
                             Height = 17,
                             Margin = new Thickness(0, 9, 0, 9),
@@ -162,25 +166,21 @@ namespace AemulusModManager
                         choiceTextBoxes.Add(newTextBox);
                         Height = Height + 35;
                     }
-                    for (int i = 0; i < nextpage.optionnum1 && i < nextpage.choice1.Length && i < choiceTextBoxes.Count; i++)
+                }
+                for (int i = 0; i < nextpage.optionnum1 && i < nextpage.choice1.Length && i < choiceTextBoxes.Count; i++) // Put the data onto the textboxes
+                {
+                    choiceTextBoxes[i].Text = nextpage.choice1[i];
+                }
+                if (nextpage.optionnum1 < choiceTextBoxes.Count) // If there's still more textboxes with leftover data, clear them
+                {
+                    for (int ii = nextpage.optionnum1; ii < choiceTextBoxes.Count && ii < choiceTextBoxes.Count; ii++)
                     {
-                        choiceTextBoxes[i].Text = nextpage.choice1[i];
-                    }
-                    if (nextpage.optionnum1 < choiceTextBoxes.Count)
-                    {
-                        for (int ii = nextpage.optionnum1; ii < choiceTextBoxes.Count && ii < choiceTextBoxes.Count; ii++)
-                        {
-                            choiceTextBoxes[ii].Text = "";
-                        }
+                        choiceTextBoxes[ii].Text = "";
                     }
                 }
             }
-            else
+            else // Otherwise, clear everything and set up a blank page.
             {
-                choiceTextBoxes.Clear();
-                TextBoxContainer.Children.Clear();
-                choiceTextBoxes.Add(Choice1Box);
-                choiceTextBoxes.Add(Choice2Box);
                 OptionNameBox.Text = "";
                 DescBox.Text = "";
                 PreviewBox.Text = "";
@@ -192,61 +192,65 @@ namespace AemulusModManager
         }
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            if (configpage == 1)
+            if (configpage == 1) // It shouldn't be possible to click the back button on page one, but this is a failsafe.
             {
                 configpage = 1;
                 BackButton.IsEnabled = false;
             }
             else
             {
-                Height = 350;
-                configpage = configpage - 1;
-                if (configpage == 1)
+                Height = 350; // Reset the hight to the default
+                configpage = configpage - 1; // Set the page variable to the previous
+                if (configpage == 1) // Disable the back button if the page is now the first page
                     BackButton.IsEnabled = false;
                 PageBox.Text = $"Option {configpage}";
                 Utilities.ParallelLogger.Log($@"[DEBUG] configpage = {configpage}");
-                if (choicenumber < 2)
+                if (choicenumber < 2) // Guarentees essentially that the number is valid before moving on, it'll get overwritten shortly
                     choicenumber = 2;
-                int index = configpage + 1;
-                if (OptionNameBox.Text != null)
+                string[] choice = new string[choicenumber];
+                for (int i = 0; i < choiceTextBoxes.Count; i++) // Counts number of choices and stores it. It stores i - 1 because that was the last valid textbox
                 {
-                    string[] choice = new string[choicenumber];
-                    for (int i = 0; i < choiceTextBoxes.Count; i++)
+                    choice[i] = choiceTextBoxes[i].Text;
+                    if (string.IsNullOrEmpty(choice[i]))
                     {
-                        choice[i] = choiceTextBoxes[i].Text;
-                        if (string.IsNullOrEmpty(choice[i]))
-                        {
-                            choicenumber = i - 1;
-                            break;
-                        }
+                        choicenumber = i - 1;
+                        Utilities.ParallelLogger.Log($@"[DEBUG] {configpage + 1} was reported to have {choicenumber} choices.");
+                        break;
                     }
-                    if (index >= 0 && index < storedpages.Count)
-                        storedpages[index] = new StoredPage(OptionNameBox.Text, choicenumber, DescBox.Text, PreviewBox.Text, choice);
-                    else
-                        storedpages.Add(new StoredPage(OptionNameBox.Text, choicenumber, DescBox.Text, PreviewBox.Text, choice));
                 }
-                if (index - 2 >= 0 && index - 2 < storedpages.Count)
+                int index = configpage - 1; // Local variable that I can use. Converts the current page to a number starting at 0 instead of 1.
+                if (index <= 0) // Double checks for validity because, again, I've had so many problems
+                    index = 0;
+                if (index + 1 >= 0 && index + 1 < storedpages.Count) // Checks to see if the page (before clicking back) is already stored somewhere.
+                    storedpages[index + 1] = new StoredPage(OptionNameBox.Text, choicenumber, DescBox.Text, PreviewBox.Text, choice); // If yes, overwrite it.
+                else
+                    storedpages.Add(new StoredPage(OptionNameBox.Text, choicenumber, DescBox.Text, PreviewBox.Text, choice)); // If not, store and add it.
+                Utilities.ParallelLogger.Log($"[DEBUG] Stored to index {index + 1}");
+                choiceTextBoxes.Clear();
+                TextBoxContainer.Children.Clear();
+                choiceTextBoxes.Add(Choice1Box);
+                choiceTextBoxes.Add(Choice2Box);
+                if (index >= 0 && index < storedpages.Count) // If the data for this page exists, read it and set it to the text boxes.
                 {
-                    StoredPage prevpage = storedpages[index - 2];
+                    StoredPage prevpage = storedpages[index];
                     OptionNameBox.Text = prevpage.optionname1;
                     DescBox.Text = prevpage.description1;
                     PreviewBox.Text = prevpage.previewpath1;
+                    if (prevpage.optionnum1 <= 2)
+                        prevpage.optionnum1 = 2;
+                    choicenumber = prevpage.optionnum1;
                     // Debug
-                    Utilities.ParallelLogger.Log($"[DEBUG] choiceTextBoxes.Count = {choiceTextBoxes.Count}, prevpage.optionnum1 = {prevpage.optionnum1}");
+                    Utilities.ParallelLogger.Log($"[DEBUG] choiceTextBoxes.Count = {choiceTextBoxes.Count}, prevpage.optionnum1 = {prevpage.optionnum1}, prevpage pulled from index {index}");
 
-                    choiceTextBoxes.Clear();
-                    TextBoxContainer.Children.Clear();
-                    choiceTextBoxes.Add(Choice1Box);
-                    choiceTextBoxes.Add(Choice2Box);
+
                     if (prevpage.optionnum1 >= 2)
                     {
-                        choicenumber = prevpage.optionnum1;
-                        for (int i = 3; i < prevpage.optionnum1; i++)
+                        for (int i = 3; i < prevpage.optionnum1; i++) // Starts at 3 because 1 and 2 already exist
                         {
                             System.Windows.Controls.TextBox newTextBox = new System.Windows.Controls.TextBox
                             {
                                 Name = "Choice" + i + "Box",
-                                Text = prevpage.choice1[i - 1],
+                                Text = prevpage.choice1[i - 1], // These are stored starting at 0, so I have to use the one before it
                                 Width = 365,
                                 Height = 17,
                                 Margin = new Thickness(0, 9, 0, 9),
@@ -260,20 +264,20 @@ namespace AemulusModManager
                             choiceTextBoxes.Add(newTextBox);
                             Height = Height + 35;
                         }
-                        for (int i = 0; i < prevpage.optionnum1 && i < prevpage.choice1.Length && i < choiceTextBoxes.Count; i++)
+                    }
+                    for (int i = 0; i < prevpage.optionnum1 && i < prevpage.choice1.Length && i < choiceTextBoxes.Count; i++) // Put the data onto the textboxes
+                    {
+                        choiceTextBoxes[i].Text = prevpage.choice1[i];
+                    }
+                    if (prevpage.optionnum1 < choiceTextBoxes.Count) // If there's still more textboxes with leftover data, clear them
+                    {
+                        for (int ii = prevpage.optionnum1; ii < choiceTextBoxes.Count && ii < choiceTextBoxes.Count; ii++)
                         {
-                            choiceTextBoxes[i].Text = prevpage.choice1[i];
-                        }
-                        if (prevpage.optionnum1 < choiceTextBoxes.Count)
-                        {
-                            for (int ii = prevpage.optionnum1; ii < choiceTextBoxes.Count && ii < choiceTextBoxes.Count; ii++)
-                            {
-                                choiceTextBoxes[ii].Text = "";
-                            }
+                            choiceTextBoxes[ii].Text = "";
                         }
                     }
                 }
-                else
+                else // Otherwise, clear everything and set up a blank page.
                 {
                     choiceTextBoxes.Clear();
                     TextBoxContainer.Children.Clear();
@@ -291,44 +295,44 @@ namespace AemulusModManager
         }
         private void CreateButton_Click(object sender, RoutedEventArgs e)
         {
-            string path = $@"{System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Packages\{cfgmetadata.modgame}\{cfgmetadata.modpath}";
-            if (path != $@"{System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Packages\\")
+            // Stores the config data on the current page to ensure it's up to date
+            if (choicenumber < 2) // Guarentees essentially that the number is valid before moving on, it'll get overwritten shortly
+                choicenumber = 2;
+            string[] choice = new string[choicenumber];
+            for (int i = 0; i < choiceTextBoxes.Count; i++) // Counts number of choices and stores it. It stores i - 1 because that was the last valid textbox
             {
-                if (choicenumber < 3) // Double check that choicenumber was set
-                    choicenumber = 3;
-                string[] choice = new string[choicenumber];
-                for (int i = 0; i < choiceTextBoxes.Count; i++)
+                choice[i] = choiceTextBoxes[i].Text;
+                if (string.IsNullOrEmpty(choice[i]))
                 {
-                    choice[i] = choiceTextBoxes[i].Text;
-                    if (string.IsNullOrEmpty(choice[i]))
-                    {
-                        choicenumber = i - 1;
-                        if (choicenumber < 2)
-                        {
-                            Utilities.ParallelLogger.Log($"[ERROR] You need at least two valid options.");
-                            Close();
-                            return;
-                        }
-                        break;
-                    }
+                    choicenumber = i - 1;
+                    Utilities.ParallelLogger.Log($@"[DEBUG] {configpage - 1} was reported to have {choicenumber} choices.");
+                    break;
                 }
-                Utilities.ParallelLogger.Log($@"[INFO] Config file written to [{path}\config.json].");
-                Utilities.ParallelLogger.Log($@"[DEBUG] Not really tho, listing variables:");
-                Utilities.ParallelLogger.Log($@"[DEBUG] Option Name = {OptionNameBox.Text}");
-                Utilities.ParallelLogger.Log($@"[DEBUG] Description = {DescBox.Text}");
-                Utilities.ParallelLogger.Log($@"[DEBUG] Preview Path = {PreviewBox.Text}");
-                for (int i = 0; i < choicenumber - 1; i++)
-                {
-                    Utilities.ParallelLogger.Log($@"[DEBUG] choice[{i}] = {choice[i]}");
-                }
+            }
+            int index = configpage - 1; // Local variable that I can use. Converts the current page to a number starting at 0 instead of 1.
+            if (index <= 0) // Double checks for validity because I've had so many problems ;m;
+                index = 1;
+            if (index >= 0 && index < storedpages.Count) // Checks to see if the page (before clicking next) is already stored somewhere.
+                storedpages[index] = new StoredPage(OptionNameBox.Text, choicenumber, DescBox.Text, PreviewBox.Text, choice); // If yes, overwrite it.
+            else
+                storedpages.Add(new StoredPage(OptionNameBox.Text, choicenumber, DescBox.Text, PreviewBox.Text, choice)); // If not, store and add it.
+            Utilities.ParallelLogger.Log($"[DEBUG] Stored to index {index}");
+
+            string path = $@"{System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Packages\{cfgmetadata.modgame}\{cfgmetadata.modpath}";
+            // Even if the path was set correctly, it for whatever reason can't find it. Instead, it checks for common errors.
+            if (path != $@"{System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Packages\\") // Ensures the game and mod folder for the mod were found
+            {
+                // This is where I would put my JSON writing code
+                // If I had one
+                // (I'll get on it once I fix my other errors)
                 Close();
             }
-            else if (string.IsNullOrEmpty(path))
+            else if (string.IsNullOrEmpty(path)) // If the previous check failed, check to see if it was completely blank
             {
                 Utilities.ParallelLogger.Log($"[ERROR] The path was not set.");
                 Close();
             }
-            else
+            else // If anything else happened, it's likely that the game and mod folder couldn't be found
             {
                 Utilities.ParallelLogger.Log($"[ERROR] Failed to grab the mod metadata.");
                 Close();
