@@ -111,16 +111,27 @@ namespace AemulusModManager
             if (choicenumber < 2) // Guarentees essentially that the number is valid before moving on, it'll get overwritten shortly
                 choicenumber = 2;
             string[] choice = new string[choicenumber];
-            for (int i = 0; i < choiceTextBoxes.Count; i++) // Counts number of choices and stores it. It stores i - 1 because that was the last valid textbox
+            choicenumber = choiceTextBoxes.Count;
+            for (int i = 0; i <= choicenumber; i++) // Makes sure the textboxes contain data, if not, only the ones that do will be saved.
             {
-                choice[i] = choiceTextBoxes[i].Text;
-                if (string.IsNullOrEmpty(choice[i]))
+                try
                 {
-                    choicenumber = i - 1;
-                    Utilities.ParallelLogger.Log($@"[DEBUG] {configpage - 1} was reported to have {choicenumber} choices.");
-                    break;
+                    if (string.IsNullOrEmpty(choiceTextBoxes[i].Text))
+                    {
+                        choicenumber = i;
+                        break;
+                    }
+                }
+                catch
+                {
+                    choicenumber = i;
                 }
             }
+            for (int i = 0; i <= choicenumber - 1; i++)
+            {
+                choice[i] = choiceTextBoxes[i].Text;
+            }
+            Utilities.ParallelLogger.Log($@"[DEBUG] {configpage - 1} was reported to have {choicenumber} choices.");
             int index = configpage - 1; // Local variable that I can use. Converts the current page to a number starting at 0 instead of 1.
             if (index <= 0) // Double checks for validity because I've had so many problems ;m;
                 index = 0;
@@ -145,13 +156,13 @@ namespace AemulusModManager
                 // Debug
                 Utilities.ParallelLogger.Log($"[DEBUG] choiceTextBoxes.Count = {choiceTextBoxes.Count}, nextpage.optionnum1 = {nextpage.optionnum1}, nextpage pulled from index {index}");
 
-                if (nextpage.optionnum1 >= 2) // If there was more than two options, add more textboxes.
+                if (nextpage.optionnum1 >= 3) // If there was more than two options, add more textboxes.
                 {
-                    for (int i = 3; i < nextpage.optionnum1; i++) // Starts at 3 because 1 and 2 already exist
+                    for (int i = 3; i <= nextpage.optionnum1; i++) // Starts at 3 because 1 and 2 already exist
                     {
                         System.Windows.Controls.TextBox newTextBox = new System.Windows.Controls.TextBox
                         {
-                            Name = "Choice" + i + "Box",
+                            Name = "Choice" + (i + 1) + "Box",
                             Text = nextpage.choice1[i - 1], // These are stored starting at 0, so I have to use the one before it
                             Width = 365,
                             Height = 17,
@@ -170,13 +181,6 @@ namespace AemulusModManager
                 for (int i = 0; i < nextpage.optionnum1 && i < nextpage.choice1.Length && i < choiceTextBoxes.Count; i++) // Put the data onto the textboxes
                 {
                     choiceTextBoxes[i].Text = nextpage.choice1[i];
-                }
-                if (nextpage.optionnum1 < choiceTextBoxes.Count) // If there's still more textboxes with leftover data, clear them
-                {
-                    for (int ii = nextpage.optionnum1; ii < choiceTextBoxes.Count && ii < choiceTextBoxes.Count; ii++)
-                    {
-                        choiceTextBoxes[ii].Text = "";
-                    }
                 }
             }
             else // Otherwise, clear everything and set up a blank page.
@@ -208,16 +212,27 @@ namespace AemulusModManager
                 if (choicenumber < 2) // Guarentees essentially that the number is valid before moving on, it'll get overwritten shortly
                     choicenumber = 2;
                 string[] choice = new string[choicenumber];
-                for (int i = 0; i < choiceTextBoxes.Count; i++) // Counts number of choices and stores it. It stores i - 1 because that was the last valid textbox
+                choicenumber = choiceTextBoxes.Count;
+                for (int i = 0; i <= choicenumber; i++) // Makes sure the textboxes contain data, if not, only the ones that do will be saved.
                 {
-                    choice[i] = choiceTextBoxes[i].Text;
-                    if (string.IsNullOrEmpty(choice[i]))
+                    try
                     {
-                        choicenumber = i - 1;
-                        Utilities.ParallelLogger.Log($@"[DEBUG] {configpage + 1} was reported to have {choicenumber} choices.");
-                        break;
+                        if (string.IsNullOrEmpty(choiceTextBoxes[i].Text))
+                        {
+                            choicenumber = i;
+                            break;
+                        }
+                    }
+                    catch
+                    {
+                        choicenumber = i;
                     }
                 }
+                for (int i = 0; i <= choicenumber - 1; i++)
+                {
+                    choice[i] = choiceTextBoxes[i].Text;
+                }
+                Utilities.ParallelLogger.Log($@"[DEBUG] {configpage + 1} was reported to have {choicenumber} choices.");
                 int index = configpage - 1; // Local variable that I can use. Converts the current page to a number starting at 0 instead of 1.
                 if (index <= 0) // Double checks for validity because, again, I've had so many problems
                     index = 0;
@@ -243,14 +258,14 @@ namespace AemulusModManager
                     Utilities.ParallelLogger.Log($"[DEBUG] choiceTextBoxes.Count = {choiceTextBoxes.Count}, prevpage.optionnum1 = {prevpage.optionnum1}, prevpage pulled from index {index}");
 
 
-                    if (prevpage.optionnum1 >= 2)
+                    if (prevpage.optionnum1 >= 3)
                     {
-                        for (int i = 3; i < prevpage.optionnum1; i++) // Starts at 3 because 1 and 2 already exist
+                        for (int i = 3; i <= prevpage.optionnum1; i++) // Starts at 3 because 1 and 2 already exist
                         {
                             System.Windows.Controls.TextBox newTextBox = new System.Windows.Controls.TextBox
                             {
-                                Name = "Choice" + i + "Box",
-                                Text = prevpage.choice1[i - 1], // These are stored starting at 0, so I have to use the one before it
+                                Name = "Choice" + (i + 1) + "Box",
+                                Text = prevpage.choice1[i], // These are stored starting at 0, so I have to use the one before it
                                 Width = 365,
                                 Height = 17,
                                 Margin = new Thickness(0, 9, 0, 9),
@@ -268,13 +283,6 @@ namespace AemulusModManager
                     for (int i = 0; i < prevpage.optionnum1 && i < prevpage.choice1.Length && i < choiceTextBoxes.Count; i++) // Put the data onto the textboxes
                     {
                         choiceTextBoxes[i].Text = prevpage.choice1[i];
-                    }
-                    if (prevpage.optionnum1 < choiceTextBoxes.Count) // If there's still more textboxes with leftover data, clear them
-                    {
-                        for (int ii = prevpage.optionnum1; ii < choiceTextBoxes.Count && ii < choiceTextBoxes.Count; ii++)
-                        {
-                            choiceTextBoxes[ii].Text = "";
-                        }
                     }
                 }
                 else // Otherwise, clear everything and set up a blank page.
@@ -299,16 +307,27 @@ namespace AemulusModManager
             if (choicenumber < 2) // Guarentees essentially that the number is valid before moving on, it'll get overwritten shortly
                 choicenumber = 2;
             string[] choice = new string[choicenumber];
-            for (int i = 0; i < choiceTextBoxes.Count; i++) // Counts number of choices and stores it. It stores i - 1 because that was the last valid textbox
+            choicenumber = choiceTextBoxes.Count;
+            for (int i = 0; i <= choicenumber; i++) // Makes sure the textboxes contain data, if not, only the ones that do will be saved.
             {
-                choice[i] = choiceTextBoxes[i].Text;
-                if (string.IsNullOrEmpty(choice[i]))
+                try
                 {
-                    choicenumber = i - 1;
-                    Utilities.ParallelLogger.Log($@"[DEBUG] {configpage - 1} was reported to have {choicenumber} choices.");
-                    break;
+                    if (string.IsNullOrEmpty(choiceTextBoxes[i].Text))
+                    {
+                        choicenumber = i;
+                        break;
+                    }
+                }
+                catch
+                {
+                    choicenumber = i;
                 }
             }
+            for (int i = 0; i <= choicenumber - 1; i++)
+            {
+                choice[i] = choiceTextBoxes[i].Text;
+            }
+            Utilities.ParallelLogger.Log($@"[DEBUG] {configpage} was reported to have {choicenumber} choices.");
             int index = configpage - 1; // Local variable that I can use. Converts the current page to a number starting at 0 instead of 1.
             if (index <= 0) // Double checks for validity because I've had so many problems ;m;
                 index = 1;
@@ -325,7 +344,6 @@ namespace AemulusModManager
                 // This is where I would put my JSON writing code
                 // If I had one
                 // (I'll get on it once I fix my other errors)
-                Close();
             }
             else if (string.IsNullOrEmpty(path)) // If the previous check failed, check to see if it was completely blank
             {
