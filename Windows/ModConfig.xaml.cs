@@ -37,7 +37,9 @@ namespace AemulusModManager
             choiceTextBoxes.Add(Choice1Box);
             choiceTextBoxes.Add(Choice2Box);
             PageBox.Text = $"Page {configpage}";
-            Height = 350;
+            Height = 383;
+            TypeBox.SelectedIndex = 0;
+            TypeDescBox.Text = "Only one option can be chosen";
             if (mm != null)
             {
                 cfgmetadata = mm;
@@ -51,13 +53,15 @@ namespace AemulusModManager
             public string description1 { get; set; }
             public string previewpath1 { get; set; }
             public string[] choice1 { get; set; }
-            public StoredPage(string optionname, int optionnum, string description, string previewpath, string[] choice)
+            public int type1 { get; set; }
+            public StoredPage(string optionname, int optionnum, string description, string previewpath, string[] choice, int type)
             {
                 optionname1 = optionname;
                 optionnum1 = optionnum;
                 description1 = description;
                 previewpath1 = previewpath;
                 choice1 = choice;
+                type1 = type;
             }
         }
         private void OptionNameBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -73,6 +77,25 @@ namespace AemulusModManager
                 NextButton.IsEnabled = false;
             }
         }
+        private void TypeBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (TypeDescBox != null)
+            {
+                if (TypeBox.SelectedIndex == 0)
+                {
+                    TypeDescBox.Text = "Only one option can be chosen";
+                }
+                else if (TypeBox.SelectedIndex == 1)
+                {
+                    TypeDescBox.Text = "Multiple options can be chosen";
+                }
+                else if (TypeBox.SelectedIndex == 2)
+                {
+                    TypeDescBox.Text = "One option can be chosen from a dropdown";
+                }
+            }
+        }
+
         private void AddChoiceBox_Click(object sender, RoutedEventArgs e)
         {
             if (choicenumber < 3)
@@ -102,7 +125,7 @@ namespace AemulusModManager
         private void NextButton_Click(object sender, RoutedEventArgs e)
         {
             // My code is kinda messy so I'll do my best to comment on what I'm pretty sure it does   -Solt11
-            Height = 350; // Reset the hight to the default
+            Height = 383; // Reset the hight to the default
             configpage = configpage + 1; // Set the page variable to the next
             PageBox.Text = $"Option {configpage}";
             Utilities.ParallelLogger.Log($@"[DEBUG] configpage = {configpage}");
@@ -132,13 +155,14 @@ namespace AemulusModManager
                 choice[i] = choiceTextBoxes[i].Text;
             }
             Utilities.ParallelLogger.Log($@"[DEBUG] {configpage - 1} was reported to have {choicenumber} choices.");
+            Utilities.ParallelLogger.Log($@"[DEBUG] The type dropdown was reported to have index {TypeBox.SelectedIndex}.");
             int index = configpage - 1; // Local variable that I can use. Converts the current page to a number starting at 0 instead of 1.
             if (index <= 0) // Double checks for validity because I've had so many problems ;m;
                 index = 0;
             if (index - 1 >= 0 && index - 1 < storedpages.Count) // Checks to see if the page (before clicking next) is already stored somewhere.
-                storedpages[index - 1] = new StoredPage(OptionNameBox.Text, choicenumber, DescBox.Text, PreviewBox.Text, choice); // If yes, overwrite it.
+                storedpages[index - 1] = new StoredPage(OptionNameBox.Text, choicenumber, DescBox.Text, PreviewBox.Text, choice, TypeBox.SelectedIndex); // If yes, overwrite it.
             else
-                storedpages.Add(new StoredPage(OptionNameBox.Text, choicenumber, DescBox.Text, PreviewBox.Text, choice)); // If not, store and add it.
+                storedpages.Add(new StoredPage(OptionNameBox.Text, choicenumber, DescBox.Text, PreviewBox.Text, choice, TypeBox.SelectedIndex)); // If not, store and add it.
             Utilities.ParallelLogger.Log($"[DEBUG] Stored to index {index - 1}");
             choiceTextBoxes.Clear(); // Since it's now been stored, clear everything.
             TextBoxContainer.Children.Clear();
@@ -153,6 +177,22 @@ namespace AemulusModManager
                 if (nextpage.optionnum1 <= 2)
                     nextpage.optionnum1 = 2;
                 choicenumber = nextpage.optionnum1;
+                TypeBox.SelectedIndex = nextpage.type1;
+                if (TypeDescBox != null)
+                {
+                    if (TypeBox.SelectedIndex == 0)
+                    {
+                        TypeDescBox.Text = "Only one option can be chosen";
+                    }
+                    else if (TypeBox.SelectedIndex == 1)
+                    {
+                        TypeDescBox.Text = "Multiple options can be chosen";
+                    }
+                    else if (TypeBox.SelectedIndex == 2)
+                    {
+                        TypeDescBox.Text = "One option can be chosen from a dropdown";
+                    }
+                }
                 // Debug
                 Utilities.ParallelLogger.Log($"[DEBUG] choiceTextBoxes.Count = {choiceTextBoxes.Count}, nextpage.optionnum1 = {nextpage.optionnum1}, nextpage pulled from index {index}");
 
@@ -162,7 +202,7 @@ namespace AemulusModManager
                     {
                         System.Windows.Controls.TextBox newTextBox = new System.Windows.Controls.TextBox
                         {
-                            Name = "Choice" + (i + 1) + "Box",
+                            Name = "Choice" + i + "Box",
                             Text = nextpage.choice1[i - 1], // These are stored starting at 0, so I have to use the one before it
                             Width = 365,
                             Height = 17,
@@ -192,6 +232,8 @@ namespace AemulusModManager
                 {
                     choiceTextBoxes[i].Text = "";
                 }
+                TypeBox.SelectedIndex = 0;
+                TypeDescBox.Text = "Only one option can be chosen";
             }
         }
         private void BackButton_Click(object sender, RoutedEventArgs e)
@@ -203,7 +245,7 @@ namespace AemulusModManager
             }
             else
             {
-                Height = 350; // Reset the hight to the default
+                Height = 383; // Reset the hight to the default
                 configpage = configpage - 1; // Set the page variable to the previous
                 if (configpage == 1) // Disable the back button if the page is now the first page
                     BackButton.IsEnabled = false;
@@ -233,13 +275,14 @@ namespace AemulusModManager
                     choice[i] = choiceTextBoxes[i].Text;
                 }
                 Utilities.ParallelLogger.Log($@"[DEBUG] {configpage + 1} was reported to have {choicenumber} choices.");
+                Utilities.ParallelLogger.Log($@"[DEBUG] The type dropdown was reported to have index {TypeBox.SelectedIndex}.");
                 int index = configpage - 1; // Local variable that I can use. Converts the current page to a number starting at 0 instead of 1.
                 if (index <= 0) // Double checks for validity because, again, I've had so many problems
                     index = 0;
                 if (index + 1 >= 0 && index + 1 < storedpages.Count) // Checks to see if the page (before clicking back) is already stored somewhere.
-                    storedpages[index + 1] = new StoredPage(OptionNameBox.Text, choicenumber, DescBox.Text, PreviewBox.Text, choice); // If yes, overwrite it.
+                    storedpages[index + 1] = new StoredPage(OptionNameBox.Text, choicenumber, DescBox.Text, PreviewBox.Text, choice, TypeBox.SelectedIndex); // If yes, overwrite it.
                 else
-                    storedpages.Add(new StoredPage(OptionNameBox.Text, choicenumber, DescBox.Text, PreviewBox.Text, choice)); // If not, store and add it.
+                    storedpages.Add(new StoredPage(OptionNameBox.Text, choicenumber, DescBox.Text, PreviewBox.Text, choice, TypeBox.SelectedIndex)); // If not, store and add it.
                 Utilities.ParallelLogger.Log($"[DEBUG] Stored to index {index + 1}");
                 choiceTextBoxes.Clear();
                 TextBoxContainer.Children.Clear();
@@ -254,6 +297,22 @@ namespace AemulusModManager
                     if (prevpage.optionnum1 <= 2)
                         prevpage.optionnum1 = 2;
                     choicenumber = prevpage.optionnum1;
+                    TypeBox.SelectedIndex = prevpage.type1;
+                    if (TypeDescBox != null)
+                    {
+                        if (TypeBox.SelectedIndex == 0)
+                        {
+                            TypeDescBox.Text = "Only one option can be chosen";
+                        }
+                        else if (TypeBox.SelectedIndex == 1)
+                        {
+                            TypeDescBox.Text = "Multiple options can be chosen";
+                        }
+                        else if (TypeBox.SelectedIndex == 2)
+                        {
+                            TypeDescBox.Text = "One option can be chosen from a dropdown";
+                        }
+                    }
                     // Debug
                     Utilities.ParallelLogger.Log($"[DEBUG] choiceTextBoxes.Count = {choiceTextBoxes.Count}, prevpage.optionnum1 = {prevpage.optionnum1}, prevpage pulled from index {index}");
 
@@ -264,8 +323,8 @@ namespace AemulusModManager
                         {
                             System.Windows.Controls.TextBox newTextBox = new System.Windows.Controls.TextBox
                             {
-                                Name = "Choice" + (i + 1) + "Box",
-                                Text = prevpage.choice1[i], // These are stored starting at 0, so I have to use the one before it
+                                Name = "Choice" + i + "Box",
+                                Text = prevpage.choice1[i - 1], // These are stored starting at 0, so I have to use the one before it
                                 Width = 365,
                                 Height = 17,
                                 Margin = new Thickness(0, 9, 0, 9),
@@ -287,10 +346,6 @@ namespace AemulusModManager
                 }
                 else // Otherwise, clear everything and set up a blank page.
                 {
-                    choiceTextBoxes.Clear();
-                    TextBoxContainer.Children.Clear();
-                    choiceTextBoxes.Add(Choice1Box);
-                    choiceTextBoxes.Add(Choice2Box);
                     OptionNameBox.Text = "";
                     DescBox.Text = "";
                     PreviewBox.Text = "";
@@ -298,6 +353,8 @@ namespace AemulusModManager
                     {
                         choiceTextBoxes[i].Text = "";
                     }
+                    TypeBox.SelectedIndex = 0;
+                    TypeDescBox.Text = "Only one option can be chosen";
                 }
             }
         }
@@ -324,17 +381,18 @@ namespace AemulusModManager
                 }
             }
             for (int i = 0; i <= choicenumber - 1; i++)
-            {
-                choice[i] = choiceTextBoxes[i].Text;
-            }
+                {
+                    choice[i] = choiceTextBoxes[i].Text;
+                }
             Utilities.ParallelLogger.Log($@"[DEBUG] {configpage} was reported to have {choicenumber} choices.");
+            Utilities.ParallelLogger.Log($@"[DEBUG] The type dropdown was reported to have index {TypeBox.SelectedIndex}.");
             int index = configpage - 1; // Local variable that I can use. Converts the current page to a number starting at 0 instead of 1.
             if (index <= 0) // Double checks for validity because I've had so many problems ;m;
                 index = 1;
             if (index >= 0 && index < storedpages.Count) // Checks to see if the page (before clicking next) is already stored somewhere.
-                storedpages[index] = new StoredPage(OptionNameBox.Text, choicenumber, DescBox.Text, PreviewBox.Text, choice); // If yes, overwrite it.
+                storedpages[index] = new StoredPage(OptionNameBox.Text, choicenumber, DescBox.Text, PreviewBox.Text, choice, TypeBox.SelectedIndex); // If yes, overwrite it.
             else
-                storedpages.Add(new StoredPage(OptionNameBox.Text, choicenumber, DescBox.Text, PreviewBox.Text, choice)); // If not, store and add it.
+                storedpages.Add(new StoredPage(OptionNameBox.Text, choicenumber, DescBox.Text, PreviewBox.Text, choice, TypeBox.SelectedIndex)); // If not, store and add it.
             Utilities.ParallelLogger.Log($"[DEBUG] Stored to index {index}");
 
             string path = $@"{System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Packages\{cfgmetadata.modgame}\{cfgmetadata.modpath}";
