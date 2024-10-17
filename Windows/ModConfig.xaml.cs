@@ -13,6 +13,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Windows.Media;
 using static System.Net.Mime.MediaTypeNames;
 using System.Data;
+using System.Runtime.CompilerServices;
 
 
 namespace AemulusModManager
@@ -29,6 +30,26 @@ namespace AemulusModManager
         private List<System.Windows.Controls.TextBox> choiceTextBoxes = new List<System.Windows.Controls.TextBox>();
         List<StoredPage> storedpages = new List<StoredPage>();
 
+        public class StoredPage
+        {
+            public string optionname1 { get; set; }
+            public int optionnum1 { get; set; }
+            public string description1 { get; set; }
+            [JsonIgnore]
+            public string previewpath1 { get; set; }
+            public string[] choice1 { get; set; }
+            public int type1 { get; set; }
+            public StoredPage() { }
+            public StoredPage(string optionname, int optionnum, string description, string previewpath, string[] choice, int type)
+            {
+                this.optionname1 = optionname;
+                this.optionnum1 = optionnum;
+                this.description1 = description;
+                this.previewpath1 = previewpath;
+                this.choice1 = choice;
+                this.type1 = type;
+            }
+        }
         public ModConfig(ConfigMetadata mm)
         {
             InitializeComponent();
@@ -45,23 +66,67 @@ namespace AemulusModManager
                 cfgmetadata = mm;
                 Title = $"Edit {mm.name} Configuration Options";
             }
-        }
-        public class StoredPage
-        {
-            public string optionname1 { get; set; }
-            public int optionnum1 { get; set; }
-            public string description1 { get; set; }
-            public string previewpath1 { get; set; }
-            public string[] choice1 { get; set; }
-            public int type1 { get; set; }
-            public StoredPage(string optionname, int optionnum, string description, string previewpath, string[] choice, int type)
+            // There's a lot of code in here but the first page has to be set up within this same area or it won't show up at first.
+            string path = $@"{System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Packages\{cfgmetadata.modgame}\{cfgmetadata.modpath}";
+            string filepath = path + $@"\config.json";
+            if (File.Exists(filepath))
             {
-                optionname1 = optionname;
-                optionnum1 = optionnum;
-                description1 = description;
-                previewpath1 = previewpath;
-                choice1 = choice;
-                type1 = type;
+                var jsonoptions = new JsonSerializerOptions
+                {
+                    WriteIndented = true // I'm not sure if I need this for reading it but might as well play it safe.
+                };
+                string jsonString = File.ReadAllText(filepath);
+                // Set the first page up from JSON
+                storedpages = JsonSerializer.Deserialize<List<StoredPage>>(jsonString, jsonoptions);
+                OptionNameBox.Text = storedpages[0].optionname1;
+                DescBox.Text = storedpages[0].description1;
+                PreviewBox.Text = storedpages[0].previewpath1;
+                if (storedpages[0].optionnum1 <= 2)
+                    storedpages[0].optionnum1 = 2;
+                choicenumber = storedpages[0].optionnum1;
+                TypeBox.SelectedIndex = storedpages[0].type1;
+                if (TypeDescBox != null)
+                {
+                    if (TypeBox.SelectedIndex == 0)
+                    {
+                        TypeDescBox.Text = "Only one option can be chosen";
+                    }
+                    else if (TypeBox.SelectedIndex == 1)
+                    {
+                        TypeDescBox.Text = "Multiple options can be chosen";
+                    }
+                    else if (TypeBox.SelectedIndex == 2)
+                    {
+                        TypeDescBox.Text = "One option can be chosen from a dropdown";
+                    }
+                }
+                if (storedpages[0].optionnum1 >= 3) // If there was more than two options, add more textboxes.
+                {
+                    for (int i = 3; i <= storedpages[0].optionnum1; i++) // Starts at 3 because 1 and 2 already exist
+                    {
+                        System.Windows.Controls.TextBox newTextBox = new System.Windows.Controls.TextBox
+                        {
+                            Name = "Choice" + i + "Box",
+                            Text = storedpages[0].choice1[i - 1], // These are stored starting at 0, so I have to use the one before it
+                            Width = 365,
+                            Height = 17,
+                            Margin = new Thickness(0, 9, 0, 9),
+                            HorizontalAlignment = System.Windows.HorizontalAlignment.Left,
+                            VerticalAlignment = System.Windows.VerticalAlignment.Center,
+                            Background = (SolidColorBrush)new BrushConverter().ConvertFromString("#202020"),
+                            BorderBrush = (SolidColorBrush)new BrushConverter().ConvertFromString("#424242"),
+                            Foreground = (SolidColorBrush)new BrushConverter().ConvertFromString("#f2f2f2"),
+                        };
+                        TextBoxContainer.Children.Add(newTextBox);
+                        choiceTextBoxes.Add(newTextBox);
+                        Height = Height + 35;
+                    }
+                }
+                for (int i = 0; i < storedpages[0].optionnum1 && i < storedpages[0].choice1.Length && i < choiceTextBoxes.Count; i++) // Put the data onto the textboxes
+                {
+                    choiceTextBoxes[i].Text = storedpages[0].choice1[i];
+                }
+                Utilities.ParallelLogger.Log($@"[DEBUG] Loaded {storedpages.Count} pages.");
             }
         }
         private void OptionNameBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -70,11 +135,25 @@ namespace AemulusModManager
             {
                 CreateButton.IsEnabled = true;
                 NextButton.IsEnabled = true;
+                PreviewButton.IsEnabled = true;
+                PreviewBox.IsEnabled = true;
+                TypeBox.IsEnabled = true;
+                DescBox.IsEnabled = true;
+                Choice1Box.IsEnabled = true;
+                Choice2Box.IsEnabled = true;
+                AddChoiceButton.IsEnabled = true;
             }
             else
             {
                 CreateButton.IsEnabled = false;
                 NextButton.IsEnabled = false;
+                PreviewButton.IsEnabled = false;
+                PreviewBox.IsEnabled = false;
+                TypeBox.IsEnabled = false;
+                DescBox.IsEnabled = false;
+                Choice1Box.IsEnabled = false;
+                Choice2Box.IsEnabled = false;
+                AddChoiceButton.IsEnabled = false;
             }
         }
         private void TypeBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -96,7 +175,7 @@ namespace AemulusModManager
             }
         }
 
-        private void AddChoiceBox_Click(object sender, RoutedEventArgs e)
+        private void AddChoiceButton_Click(object sender, RoutedEventArgs e)
         {
             if (choicenumber < 3)
                 choicenumber = 3;
@@ -234,6 +313,15 @@ namespace AemulusModManager
                 }
                 TypeBox.SelectedIndex = 0;
                 TypeDescBox.Text = "Only one option can be chosen";
+                CreateButton.IsEnabled = false;
+                NextButton.IsEnabled = false;
+                PreviewButton.IsEnabled = false;
+                PreviewBox.IsEnabled = false;
+                TypeBox.IsEnabled = false;
+                DescBox.IsEnabled = false;
+                Choice1Box.IsEnabled = false;
+                Choice2Box.IsEnabled = false;
+                AddChoiceButton.IsEnabled = false;
             }
         }
         private void BackButton_Click(object sender, RoutedEventArgs e)
@@ -251,39 +339,42 @@ namespace AemulusModManager
                     BackButton.IsEnabled = false;
                 PageBox.Text = $"Option {configpage}";
                 Utilities.ParallelLogger.Log($@"[DEBUG] configpage = {configpage}");
-                if (choicenumber < 2) // Guarentees essentially that the number is valid before moving on, it'll get overwritten shortly
-                    choicenumber = 2;
-                string[] choice = new string[choicenumber];
-                choicenumber = choiceTextBoxes.Count;
-                for (int i = 0; i <= choicenumber; i++) // Makes sure the textboxes contain data, if not, only the ones that do will be saved.
-                {
-                    try
-                    {
-                        if (string.IsNullOrEmpty(choiceTextBoxes[i].Text))
-                        {
-                            choicenumber = i;
-                            break;
-                        }
-                    }
-                    catch
-                    {
-                        choicenumber = i;
-                    }
-                }
-                for (int i = 0; i <= choicenumber - 1; i++)
-                {
-                    choice[i] = choiceTextBoxes[i].Text;
-                }
-                Utilities.ParallelLogger.Log($@"[DEBUG] {configpage + 1} was reported to have {choicenumber} choices.");
-                Utilities.ParallelLogger.Log($@"[DEBUG] The type dropdown was reported to have index {TypeBox.SelectedIndex}.");
                 int index = configpage - 1; // Local variable that I can use. Converts the current page to a number starting at 0 instead of 1.
                 if (index <= 0) // Double checks for validity because, again, I've had so many problems
                     index = 0;
-                if (index + 1 >= 0 && index + 1 < storedpages.Count) // Checks to see if the page (before clicking back) is already stored somewhere.
-                    storedpages[index + 1] = new StoredPage(OptionNameBox.Text, choicenumber, DescBox.Text, PreviewBox.Text, choice, TypeBox.SelectedIndex); // If yes, overwrite it.
-                else
-                    storedpages.Add(new StoredPage(OptionNameBox.Text, choicenumber, DescBox.Text, PreviewBox.Text, choice, TypeBox.SelectedIndex)); // If not, store and add it.
-                Utilities.ParallelLogger.Log($"[DEBUG] Stored to index {index + 1}");
+                if (!string.IsNullOrWhiteSpace(OptionNameBox.Text))
+                {
+                    if (choicenumber < 2) // Guarentees essentially that the number is valid before moving on, it'll get overwritten shortly
+                        choicenumber = 2;
+                    string[] choice = new string[choicenumber];
+                    choicenumber = choiceTextBoxes.Count;
+                    for (int i = 0; i <= choicenumber; i++) // Makes sure the textboxes contain data, if not, only the ones that do will be saved.
+                    {
+                        try
+                        {
+                            if (string.IsNullOrEmpty(choiceTextBoxes[i].Text))
+                            {
+                                choicenumber = i;
+                                break;
+                            }
+                        }
+                        catch
+                        {
+                            choicenumber = i;
+                        }
+                    }
+                    for (int i = 0; i <= choicenumber - 1; i++)
+                    {
+                        choice[i] = choiceTextBoxes[i].Text;
+                    }
+                    Utilities.ParallelLogger.Log($@"[DEBUG] {configpage + 1} was reported to have {choicenumber} choices.");
+                    Utilities.ParallelLogger.Log($@"[DEBUG] The type dropdown was reported to have index {TypeBox.SelectedIndex}.");
+                    if (index + 1 >= 0 && index + 1 < storedpages.Count) // Checks to see if the page (before clicking back) is already stored somewhere.
+                        storedpages[index + 1] = new StoredPage(OptionNameBox.Text, choicenumber, DescBox.Text, PreviewBox.Text, choice, TypeBox.SelectedIndex); // If yes, overwrite it.
+                    else
+                        storedpages.Add(new StoredPage(OptionNameBox.Text, choicenumber, DescBox.Text, PreviewBox.Text, choice, TypeBox.SelectedIndex)); // If not, store and add it.
+                    Utilities.ParallelLogger.Log($"[DEBUG] Stored to index {index + 1}");
+                }
                 choiceTextBoxes.Clear();
                 TextBoxContainer.Children.Clear();
                 choiceTextBoxes.Add(Choice1Box);
@@ -355,6 +446,15 @@ namespace AemulusModManager
                     }
                     TypeBox.SelectedIndex = 0;
                     TypeDescBox.Text = "Only one option can be chosen";
+                    CreateButton.IsEnabled = false;
+                    NextButton.IsEnabled = false;
+                    PreviewButton.IsEnabled = false;
+                    PreviewBox.IsEnabled = false;
+                    TypeBox.IsEnabled = false;
+                    DescBox.IsEnabled = false;
+                    Choice1Box.IsEnabled = false;
+                    Choice2Box.IsEnabled = false;
+                    AddChoiceButton.IsEnabled = false;
                 }
             }
         }
@@ -399,9 +499,20 @@ namespace AemulusModManager
             // Even if the path was set correctly, it for whatever reason can't find it. Instead, it checks for common errors.
             if (path != $@"{System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Packages\\") // Ensures the game and mod folder for the mod were found
             {
-                // This is where I would put my JSON writing code
-                // If I had one
-                // (I'll get on it once I fix my other errors)
+                var jsonoptions = new JsonSerializerOptions
+                {
+                    WriteIndented = true
+                };
+                string jsonString = JsonSerializer.Serialize(storedpages, jsonoptions);
+                string filepath = path + $@"\config.json";
+                File.WriteAllText(filepath, jsonString);
+                Utilities.ParallelLogger.Log($"[INFO] config.json written to {filepath}.");
+                for (int i = 0; i < storedpages.Count; i++)
+                {
+                    if (File.Exists(storedpages[i].previewpath1))
+                        System.IO.File.Copy(storedpages[i].previewpath1, path + $@"\Preview" + (i + 1) + ".png", true);
+                }
+                Close();
             }
             else if (string.IsNullOrEmpty(path)) // If the previous check failed, check to see if it was completely blank
             {
