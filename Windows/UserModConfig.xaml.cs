@@ -69,11 +69,14 @@ namespace AemulusModManager.Windows
             string path = $@"{System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Packages\{cfgmetadata.modgame}\{cfgmetadata.modpath}";
             string jsonpath = path + $@"\config.json";
             string previewpath = path + $@"\Preview{configpage}.png";
-            BitmapImage preview = new BitmapImage();
-            preview.BeginInit();
-            preview.UriSource = new Uri(previewpath, UriKind.Absolute);
-            preview.EndInit();
-            Preview.Source = preview;
+            if (File.Exists(previewpath))
+            {
+                BitmapImage preview = new BitmapImage();
+                preview.BeginInit();
+                preview.UriSource = new Uri(previewpath, UriKind.Absolute);
+                preview.EndInit();
+                Preview.Source = preview;
+            }
             if (File.Exists(jsonpath))
             {
                 var jsonoptions = new JsonSerializerOptions
@@ -83,42 +86,48 @@ namespace AemulusModManager.Windows
                 string jsonString = File.ReadAllText(jsonpath);
                 storedpages = JsonSerializer.Deserialize<List<StoredPage>>(jsonString, jsonoptions);
                 NameText.Text = $"{storedpages[0].optionname}";
-            }
-            if (storedpages[0].type == 0 || storedpages[0].type == 1) // If the type needs it, add textblocks.
-            {
-                for (int i = 1; i <= storedpages[0].optionnum; i++)
+                DescBox.Text = $"{storedpages[index].description}";
+                if (storedpages[0].type == 0 || storedpages[0].type == 1) // If the type needs it, add textblocks.
                 {
-                    System.Windows.Controls.TextBlock newTextBox = new System.Windows.Controls.TextBlock
+                    for (int i = 1; i <= storedpages[0].optionnum; i++)
                     {
-                        Name = "Choice" + i + "Box",
-                        Text = storedpages[0].choice[i - 1], // These are stored starting at 0, so I have to use the one before it
-                        Margin = new Thickness(0, 3, 0, 3),
-                        HorizontalAlignment = System.Windows.HorizontalAlignment.Center,
-                        VerticalAlignment = System.Windows.VerticalAlignment.Center,
-                        Foreground = (SolidColorBrush)new BrushConverter().ConvertFromString("#d3d3d3"),
-                        FontSize = 15,
-                        FontWeight = FontWeights.Bold
-                    };
-                    TextBoxContainer.Children.Add(newTextBox);
-                    choiceTextBoxes.Add(newTextBox);
-                    Height += 23;
+                        System.Windows.Controls.TextBlock newTextBox = new System.Windows.Controls.TextBlock
+                        {
+                            Name = "Choice" + i + "Box",
+                            Text = storedpages[0].choice[i - 1], // These are stored starting at 0, so I have to use the one before it
+                            Margin = new Thickness(0, 3, 0, 3),
+                            HorizontalAlignment = System.Windows.HorizontalAlignment.Center,
+                            VerticalAlignment = System.Windows.VerticalAlignment.Center,
+                            Foreground = (SolidColorBrush)new BrushConverter().ConvertFromString("#d3d3d3"),
+                            FontSize = 15,
+                            FontWeight = FontWeights.Bold
+                        };
+                        TextBoxContainer.Children.Add(newTextBox);
+                        choiceTextBoxes.Add(newTextBox);
+                        Height += 23;
+                    }
+                }
+                for (int i = 0; i < storedpages[0].optionnum && i < storedpages[0].choice.Length && i < choiceTextBoxes.Count; i++) // Put the data onto the textblocks
+                {
+                    choiceTextBoxes[i].Text = storedpages[0].choice[i];
+                }
+                if (storedpages[0].type == 0)
+                {
+                    TypeDescText.Text = "Only one option can be chosen.";
+                }
+                else if (storedpages[0].type == 1)
+                {
+                    TypeDescText.Text = "Multiple options can be chosen.";
+                }
+                else if (storedpages[0].type == 2)
+                {
+                    TypeDescText.Text = "One option can be chosen from a dropdown.";
                 }
             }
-            for (int i = 0; i < storedpages[0].optionnum && i < storedpages[0].choice.Length && i < choiceTextBoxes.Count; i++) // Put the data onto the textblocks
+            else
             {
-                choiceTextBoxes[i].Text = storedpages[0].choice[i];
-            }
-            if (storedpages[0].type == 0)
-            {
-                TypeDescText.Text = "Only one option can be chosen.";
-            }
-            else if (storedpages[0].type == 1)
-            {
-                TypeDescText.Text = "Multiple options can be chosen.";
-            }
-            else if (storedpages[0].type == 2)
-            {
-                TypeDescText.Text = "One option can be chosen from a dropdown.";
+                Utilities.ParallelLogger.Log($"[ERROR] config.json not found. Make one in Edit Mod Configuration [MODDER].");
+                Close();
             }
         }
         private void NextButton_Click(object sender, RoutedEventArgs e)
@@ -137,6 +146,7 @@ namespace AemulusModManager.Windows
                 if (storedpages.Count == configpage || storedpages.Count < configpage)
                     NextButton.IsEnabled = false;
                 NameText.Text = $"{storedpages[index].optionname}";
+                DescBox.Text = $"{storedpages[index].description}";
                 string previewpath = $@"{System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Packages\{cfgmetadata.modgame}\{cfgmetadata.modpath}\Preview{configpage}.png";
                 BitmapImage preview = new BitmapImage();
                 preview.BeginInit();
@@ -209,6 +219,7 @@ namespace AemulusModManager.Windows
                 Utilities.ParallelLogger.Log($"[DEBUG] 'Page' Number = {configpage}.");
                 Utilities.ParallelLogger.Log($"[DEBUG] Index Number = {index}.");
                 NameText.Text = $"{storedpages[index].optionname}";
+                DescBox.Text = $"{storedpages[index].description}";
                 string previewpath = $@"{System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Packages\{cfgmetadata.modgame}\{cfgmetadata.modpath}\Preview{configpage}.png";
                 BitmapImage preview = new BitmapImage();
                 preview.BeginInit();
@@ -235,6 +246,18 @@ namespace AemulusModManager.Windows
                     choiceTextBoxes.Add(newTextBox);
                     Height += 23;
                 }
+            }
+            else if (storedpages[index].type == 2)
+            {
+                ComboBox moddrop = new ComboBox();
+                moddrop.Width = 200;
+                moddrop.Height = 30;
+                for (int i = 1; i <= storedpages[index].optionnum; i++)
+                {
+                    moddrop.Items.Add($"{storedpages[index].choice[i - 1]}");
+                }
+                moddrop.SelectedIndex = 0; // Select the first item by default
+                TextBoxContainer.Children.Add(moddrop);
             }
             for (int i = 0; i < storedpages[index].optionnum && i < storedpages[index].choice.Length && i < choiceTextBoxes.Count; i++) // Put the data onto the textblocks
             {

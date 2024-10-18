@@ -3239,7 +3239,14 @@ namespace AemulusModManager
                     mm.modgame = game;
                     mm.modpath = row.path;
                     UserModConfig mcfg = new UserModConfig(mm);
-                    mcfg.ShowDialog();
+                    try
+                    {
+                        mcfg.ShowDialog();
+                    }
+                    catch
+                    {
+                        return;
+                    }
                 }
                 else
                 {
