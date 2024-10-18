@@ -29,7 +29,7 @@
             <RowDefinition Height="5"/>
         </Grid.RowDefinitions>
         <Image Name="Preview" Width="350" Stretch="Uniform" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="1" Grid.ColumnSpan="2"/>
-        <TextBox Name="PageBox" Background="#202020" BorderBrush="#424242" Foreground="#f2f2f2" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Width="80" IsEnabled="False" Margin="120,0,0,0"/>
+        <TextBlock Name="PageBox" Foreground="LightGray" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="15" FontWeight="Bold" Margin="0,0,75,0"/>
         <TextBlock Foreground="LightGray" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="15" FontWeight="Bold" Grid.Row="2" Grid.Column="0" Text="Option Name"/>
         <TextBlock Foreground="LightGray" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="15" FontWeight="Bold" Grid.Row="8" Grid.Column="0" Text="Choices"/>
         <TextBlock Foreground="LightGray" VerticalAlignment="Top" Padding="2" HorizontalAlignment="Center" FontSize="15" FontWeight="Bold" Grid.Row="4" Grid.Column="0">Description</TextBlock>
