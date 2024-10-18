@@ -22,7 +22,17 @@
         <TextBlock Name="TypeDescText" TextAlignment="Center" Grid.Row="2" VerticalAlignment="Center" FontWeight="Bold" HorizontalAlignment="Center" FontSize="16" Foreground="#f2f2f2" TextWrapping="Wrap"/>
         <TextBlock Name="DescBox" TextAlignment="Center" Grid.Row="3" VerticalAlignment="Center" FontWeight="Normal" HorizontalAlignment="Center" FontSize="16" Foreground="#f2f2f2" TextWrapping="Wrap" Margin="10,10,10,10"/>
         <Grid Grid.Row="4" Width="375">
-            <StackPanel x:Name="TextBoxContainer" VerticalAlignment="Top">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="50"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <StackPanel x:Name="TextBoxContainer" VerticalAlignment="Top" Grid.Column="1">
+                <!-- TextBox controls will be added here dynamically -->
+            </StackPanel>
+            <StackPanel x:Name="CheckBoxContainer" VerticalAlignment="Top" Grid.Column="0">
+                <!-- TextBox controls will be added here dynamically -->
+            </StackPanel>
+            <StackPanel x:Name="DropBoxContainer" VerticalAlignment="Top" Grid.Column="0" Grid.ColumnSpan="2">
                 <!-- TextBox controls will be added here dynamically -->
             </StackPanel>
         </Grid>

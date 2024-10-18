@@ -34,6 +34,7 @@ namespace AemulusModManager.Windows
         public int choicenumber { get; set; }
         public string thumbnailPath;
         private List<System.Windows.Controls.TextBlock> choiceTextBoxes = new List<System.Windows.Controls.TextBlock>();
+        private List<System.Windows.Controls.CheckBox> checkBoxes = new List<System.Windows.Controls.CheckBox>();
         List<StoredPage> storedpages = new List<StoredPage>();
 
         public class StoredPage
@@ -86,7 +87,7 @@ namespace AemulusModManager.Windows
                 string jsonString = File.ReadAllText(jsonpath);
                 storedpages = JsonSerializer.Deserialize<List<StoredPage>>(jsonString, jsonoptions);
                 NameText.Text = $"{storedpages[0].optionname}";
-                DescBox.Text = $"{storedpages[index].description}";
+                DescBox.Text = $"{storedpages[0].description}";
                 if (storedpages[0].type == 0 || storedpages[0].type == 1) // If the type needs it, add textblocks.
                 {
                     for (int i = 1; i <= storedpages[0].optionnum; i++)
@@ -103,9 +104,30 @@ namespace AemulusModManager.Windows
                             FontWeight = FontWeights.Bold
                         };
                         TextBoxContainer.Children.Add(newTextBox);
+                        CheckBox checkBox = new CheckBox
+                        {
+                            Name = "Check" + i + "Box",
+                            HorizontalAlignment = System.Windows.HorizontalAlignment.Right,
+                            VerticalAlignment = System.Windows.VerticalAlignment.Center,
+                            Margin = new Thickness(0, 5.5, 0, 6)
+                        };
+                        CheckBoxContainer.Children.Add(checkBox);
                         choiceTextBoxes.Add(newTextBox);
+                        checkBoxes.Add(checkBox);
                         Height += 23;
                     }
+                }
+                else if (storedpages[0].type == 2)
+                {
+                    ComboBox moddrop = new ComboBox();
+                    moddrop.Width = 200;
+                    moddrop.Height = 30;
+                    for (int i = 1; i <= storedpages[0].optionnum; i++)
+                    {
+                        moddrop.Items.Add($"{storedpages[0].choice[i - 1]}");
+                    }
+                    moddrop.SelectedIndex = 0; // Select the first item by default
+                    DropBoxContainer.Children.Add(moddrop);
                 }
                 for (int i = 0; i < storedpages[0].optionnum && i < storedpages[0].choice.Length && i < choiceTextBoxes.Count; i++) // Put the data onto the textblocks
                 {
@@ -138,6 +160,8 @@ namespace AemulusModManager.Windows
             {
                 choiceTextBoxes.Clear();
                 TextBoxContainer.Children.Clear();
+                CheckBoxContainer.Children.Clear();
+                DropBoxContainer.Children.Clear();
                 BackButton.IsEnabled = true;
                 configpage += 1;
                 Utilities.ParallelLogger.Log($"[DEBUG] Number of indecies in json = {storedpages.Count}.");
@@ -169,7 +193,16 @@ namespace AemulusModManager.Windows
                             FontWeight = FontWeights.Bold
                         };
                         TextBoxContainer.Children.Add(newTextBox);
+                        CheckBox checkBox = new CheckBox
+                        {
+                            Name = "Check" + i + "Box",
+                            HorizontalAlignment = System.Windows.HorizontalAlignment.Right,
+                            VerticalAlignment = System.Windows.VerticalAlignment.Center,
+                            Margin = new Thickness(0, 5.5, 0, 6)
+                        };
+                        CheckBoxContainer.Children.Add(checkBox);
                         choiceTextBoxes.Add(newTextBox);
+                        checkBoxes.Add(checkBox);
                         Height += 23;
                     }
                 }
@@ -183,7 +216,7 @@ namespace AemulusModManager.Windows
                         moddrop.Items.Add($"{storedpages[index].choice[i - 1]}");
                     }
                     moddrop.SelectedIndex = 0; // Select the first item by default
-                    TextBoxContainer.Children.Add(moddrop);
+                    DropBoxContainer.Children.Add(moddrop);
                 }
                 for (int i = 0; i < storedpages[index].optionnum && i < storedpages[index].choice.Length && i < choiceTextBoxes.Count; i++) // Put the data onto the textblocks
                 {
@@ -212,6 +245,8 @@ namespace AemulusModManager.Windows
                 NextButton.IsEnabled = true;
                 choiceTextBoxes.Clear();
                 TextBoxContainer.Children.Clear();
+                CheckBoxContainer.Children.Clear();
+                DropBoxContainer.Children.Clear();
                 configpage -= 1;
                 if (configpage == 1)
                     BackButton.IsEnabled = false;
@@ -243,7 +278,16 @@ namespace AemulusModManager.Windows
                         FontWeight = FontWeights.Bold
                     };
                     TextBoxContainer.Children.Add(newTextBox);
+                    CheckBox checkBox = new CheckBox
+                    {
+                        Name = "Check" + i + "Box",
+                        HorizontalAlignment = System.Windows.HorizontalAlignment.Right,
+                        VerticalAlignment = System.Windows.VerticalAlignment.Center,
+                        Margin = new Thickness(0, 5.5, 0, 6)
+                    };
+                    CheckBoxContainer.Children.Add(checkBox);
                     choiceTextBoxes.Add(newTextBox);
+                    checkBoxes.Add(checkBox);
                     Height += 23;
                 }
             }
@@ -257,7 +301,7 @@ namespace AemulusModManager.Windows
                     moddrop.Items.Add($"{storedpages[index].choice[i - 1]}");
                 }
                 moddrop.SelectedIndex = 0; // Select the first item by default
-                TextBoxContainer.Children.Add(moddrop);
+                DropBoxContainer.Children.Add(moddrop);
             }
             for (int i = 0; i < storedpages[index].optionnum && i < storedpages[index].choice.Length && i < choiceTextBoxes.Count; i++) // Put the data onto the textblocks
             {
