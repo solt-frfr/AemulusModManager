@@ -35,7 +35,9 @@ namespace AemulusModManager.Windows
         public string thumbnailPath;
         private List<System.Windows.Controls.TextBlock> choiceTextBoxes = new List<System.Windows.Controls.TextBlock>();
         private List<System.Windows.Controls.CheckBox> checkBoxes = new List<System.Windows.Controls.CheckBox>();
+        private List<System.Windows.Controls.ComboBox> combobox = new List<System.Windows.Controls.ComboBox>();
         List<StoredPage> storedpages = new List<StoredPage>();
+        List<List<int>> userchoices = new List<List<int>>();
 
         public class StoredPage
         {
@@ -69,6 +71,7 @@ namespace AemulusModManager.Windows
             configpage = 1;
             string path = $@"{System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Packages\{cfgmetadata.modgame}\{cfgmetadata.modpath}";
             string jsonpath = path + $@"\config.json";
+            string userpath = path + $@"\user.json";
             string previewpath = path + $@"\Preview{configpage}.png";
             if (File.Exists(previewpath))
             {
@@ -77,6 +80,15 @@ namespace AemulusModManager.Windows
                 preview.UriSource = new Uri(previewpath, UriKind.Absolute);
                 preview.EndInit();
                 Preview.Source = preview;
+            }
+            if (File.Exists(jsonpath))
+            {
+                var jsonoptions = new JsonSerializerOptions
+                {
+                    WriteIndented = true // I'm not sure if I need this for reading it but might as well play it safe.
+                };
+                string jsonString = File.ReadAllText(userpath);
+                userchoices = JsonSerializer.Deserialize<List<List<int>>>(jsonString, jsonoptions);
             }
             if (File.Exists(jsonpath))
             {
@@ -109,12 +121,19 @@ namespace AemulusModManager.Windows
                             Name = "Check" + i + "Box",
                             HorizontalAlignment = System.Windows.HorizontalAlignment.Right,
                             VerticalAlignment = System.Windows.VerticalAlignment.Center,
-                            Margin = new Thickness(0, 5.5, 0, 6)
+                            Margin = new Thickness(0, 5.5, 0, 6),
                         };
+                        checkBox.Checked += CheckBox_Checked;
+                        checkBox.Unchecked += CheckBox_Unchecked;
                         CheckBoxContainer.Children.Add(checkBox);
                         choiceTextBoxes.Add(newTextBox);
                         checkBoxes.Add(checkBox);
                         Height += 23;
+                    }
+                    for (int i = 0; i <= storedpages[0].optionnum; i++)
+                    {
+                        if (userchoices.Count > 0 && userchoices[index].Contains(i))
+                            checkBoxes[i].IsChecked = true;
                     }
                 }
                 else if (storedpages[0].type == 2)
@@ -128,6 +147,12 @@ namespace AemulusModManager.Windows
                     }
                     moddrop.SelectedIndex = 0; // Select the first item by default
                     DropBoxContainer.Children.Add(moddrop);
+                    combobox.Add(moddrop);
+                    for (int i = 0; i <= storedpages[index].optionnum; i++)
+                    {
+                        if (userchoices.Count > index && userchoices[index].Contains(i))
+                            combobox[0].SelectedIndex = i;
+                    }
                 }
                 for (int i = 0; i < storedpages[0].optionnum && i < storedpages[0].choice.Length && i < choiceTextBoxes.Count; i++) // Put the data onto the textblocks
                 {
@@ -135,7 +160,7 @@ namespace AemulusModManager.Windows
                 }
                 if (storedpages[0].type == 0)
                 {
-                    TypeDescText.Text = "Only one option can be chosen.";
+                    TypeDescText.Text = "Only one option can be chosen.\r\nUncheck one to select another.";
                 }
                 else if (storedpages[0].type == 1)
                 {
@@ -151,6 +176,28 @@ namespace AemulusModManager.Windows
                 Utilities.ParallelLogger.Log($"[ERROR] config.json not found. Make one in Edit Mod Configuration [MODDER].");
                 Close();
             }
+            this.SizeToContent = SizeToContent.WidthAndHeight;
+        }
+        private void CheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            CheckBox checkedBox = sender as CheckBox;
+            if (storedpages[index].type == 0)
+            {
+                foreach (var checkBox in checkBoxes)
+                {
+                    if (checkBox != checkedBox)
+                    {
+                        checkBox.IsEnabled = false;
+                    }
+                }
+            }
+        }
+        private void CheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            foreach (var checkBox in checkBoxes)
+            {
+                checkBox.IsEnabled = true;
+            }
         }
         private void NextButton_Click(object sender, RoutedEventArgs e)
         {
@@ -158,7 +205,34 @@ namespace AemulusModManager.Windows
                 NextButton.IsEnabled = false;
             else
             {
+                if (storedpages[index].type == 0 || storedpages[index].type == 1)
+                {
+                    List<int> chosen = new List<int>();
+                    for (int i = 0; i < checkBoxes.Count; i++)
+                    {
+                        if (checkBoxes[i].IsChecked == true)
+                        {
+                            chosen.Add(i);
+                        }
+                    };
+                    if (index >= 0 && index < userchoices.Count)
+                        userchoices[index] = chosen;
+                    else
+                        userchoices.Add(chosen);
+                }
+                else if (storedpages[index].type == 2)
+                {
+                    List<int> chosen = new List<int>();
+                    chosen.Add(combobox[0].SelectedIndex);
+                    if (index >= 0 && index < userchoices.Count)
+                        userchoices[index] = chosen;
+                    else
+                        userchoices.Add(chosen);
+
+                }
                 choiceTextBoxes.Clear();
+                checkBoxes.Clear();
+                combobox.Clear();
                 TextBoxContainer.Children.Clear();
                 CheckBoxContainer.Children.Clear();
                 DropBoxContainer.Children.Clear();
@@ -198,12 +272,19 @@ namespace AemulusModManager.Windows
                             Name = "Check" + i + "Box",
                             HorizontalAlignment = System.Windows.HorizontalAlignment.Right,
                             VerticalAlignment = System.Windows.VerticalAlignment.Center,
-                            Margin = new Thickness(0, 5.5, 0, 6)
+                            Margin = new Thickness(0, 5.5, 0, 6),
                         };
+                        checkBox.Checked += CheckBox_Checked;
+                        checkBox.Unchecked += CheckBox_Unchecked;
                         CheckBoxContainer.Children.Add(checkBox);
                         choiceTextBoxes.Add(newTextBox);
                         checkBoxes.Add(checkBox);
                         Height += 23;
+                    }
+                    for (int i = 0; i <= storedpages[index].optionnum; i++)
+                    {
+                        if (userchoices.Count > index && userchoices[index].Contains(i))
+                            checkBoxes[i].IsChecked = true;
                     }
                 }
                 else if (storedpages[index].type == 2)
@@ -217,14 +298,21 @@ namespace AemulusModManager.Windows
                     }
                     moddrop.SelectedIndex = 0; // Select the first item by default
                     DropBoxContainer.Children.Add(moddrop);
+                    combobox.Add(moddrop);
+                    for (int i = 0; i <= storedpages[index].optionnum; i++)
+                    {
+                        if (userchoices.Count > index && userchoices[index].Contains(i))
+                            combobox[0].SelectedIndex = i;
+                    }
                 }
+                this.SizeToContent = SizeToContent.WidthAndHeight;
                 for (int i = 0; i < storedpages[index].optionnum && i < storedpages[index].choice.Length && i < choiceTextBoxes.Count; i++) // Put the data onto the textblocks
                 {
                     choiceTextBoxes[i].Text = storedpages[index].choice[i];
                 }
                 if (storedpages[index].type == 0)
                 {
-                    TypeDescText.Text = "Only one option can be chosen.";
+                    TypeDescText.Text = "Only one option can be chosen.\r\nUncheck one to select another.";
                 }
                 else if (storedpages[index].type == 1)
                 {
@@ -238,16 +326,44 @@ namespace AemulusModManager.Windows
         }
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
+            if (storedpages[index].type == 0 || storedpages[index].type == 1)
+            {
+                List<int> chosen = new List<int>();
+                for (int i = 0; i < checkBoxes.Count; i++)
+                {
+                    if (checkBoxes[i].IsChecked == true)
+                    {
+                        chosen.Add(i);
+                    }
+                };
+                if (index >= 0 && index < userchoices.Count)
+                    userchoices[index] = chosen;
+                else
+                    userchoices.Add(chosen);
+            }
+            else if (storedpages[index].type == 2)
+            {
+                List<int> chosen = new List<int>();
+                chosen.Add(combobox[0].SelectedIndex);
+                if (index >= 0 && index < userchoices.Count)
+                    userchoices[index] = chosen;
+                else
+                    userchoices.Add(chosen);
+
+            }
             if (configpage == 1)
                 BackButton.IsEnabled = false;
             else
             {
                 NextButton.IsEnabled = true;
                 choiceTextBoxes.Clear();
+                checkBoxes.Clear();
+                combobox.Clear();
                 TextBoxContainer.Children.Clear();
                 CheckBoxContainer.Children.Clear();
                 DropBoxContainer.Children.Clear();
                 configpage -= 1;
+                this.SizeToContent = SizeToContent.WidthAndHeight;
                 if (configpage == 1)
                     BackButton.IsEnabled = false;
                 Utilities.ParallelLogger.Log($"[DEBUG] Number of indecies in json = {storedpages.Count}.");
@@ -283,12 +399,19 @@ namespace AemulusModManager.Windows
                         Name = "Check" + i + "Box",
                         HorizontalAlignment = System.Windows.HorizontalAlignment.Right,
                         VerticalAlignment = System.Windows.VerticalAlignment.Center,
-                        Margin = new Thickness(0, 5.5, 0, 6)
+                        Margin = new Thickness(0, 5.5, 0, 6),
                     };
+                    checkBox.Checked += CheckBox_Checked;
+                    checkBox.Unchecked += CheckBox_Unchecked;
                     CheckBoxContainer.Children.Add(checkBox);
                     choiceTextBoxes.Add(newTextBox);
                     checkBoxes.Add(checkBox);
                     Height += 23;
+                }
+                for (int i = 0; i <= storedpages[index].optionnum; i++)
+                {
+                    if (userchoices.Count > index && userchoices[index].Contains(i))
+                        checkBoxes[i].IsChecked = true;
                 }
             }
             else if (storedpages[index].type == 2)
@@ -296,20 +419,28 @@ namespace AemulusModManager.Windows
                 ComboBox moddrop = new ComboBox();
                 moddrop.Width = 200;
                 moddrop.Height = 30;
+                Height += 30;
                 for (int i = 1; i <= storedpages[index].optionnum; i++)
                 {
                     moddrop.Items.Add($"{storedpages[index].choice[i - 1]}");
                 }
                 moddrop.SelectedIndex = 0; // Select the first item by default
                 DropBoxContainer.Children.Add(moddrop);
+                combobox.Add(moddrop);
+                for (int i = 0; i <= storedpages[index].optionnum; i++)
+                {
+                    if (userchoices.Count > index && userchoices[index].Contains(i))
+                        combobox[0].SelectedIndex = i;
+                }
             }
+            this.SizeToContent = SizeToContent.WidthAndHeight;
             for (int i = 0; i < storedpages[index].optionnum && i < storedpages[index].choice.Length && i < choiceTextBoxes.Count; i++) // Put the data onto the textblocks
             {
                 choiceTextBoxes[i].Text = storedpages[index].choice[i];
             }
             if (storedpages[index].type == 0)
             {
-                TypeDescText.Text = "Only one option can be chosen.";
+                TypeDescText.Text = "Only one option can be chosen.\r\nUncheck one to select another.";
             }
             else if (storedpages[index].type == 1)
             {
@@ -326,6 +457,40 @@ namespace AemulusModManager.Windows
         }
         private void CreateButton_Click(object sender, RoutedEventArgs e)
         {
+            if (storedpages[index].type == 0 || storedpages[index].type == 1)
+            {
+                List<int> chosen = new List<int>();
+                for (int i = 0; i < checkBoxes.Count; i++)
+                {
+                    if (checkBoxes[i].IsChecked == true)
+                    {
+                        chosen.Add(i);
+                    }
+                };
+                if (index >= 0 && index < userchoices.Count)
+                    userchoices[index] = chosen;
+                else
+                    userchoices.Add(chosen);
+            }
+            else if (storedpages[index].type == 2)
+            {
+                List<int> chosen = new List<int>();
+                chosen.Add(combobox[0].SelectedIndex);
+                if (index >= 0 && index < userchoices.Count)
+                    userchoices[index] = chosen;
+                else
+                    userchoices.Add(chosen);
+
+            }
+            var jsonoptions = new JsonSerializerOptions
+            {
+                WriteIndented = true
+            };
+            string path = $@"{System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Packages\{cfgmetadata.modgame}\{cfgmetadata.modpath}";
+            string jsonString = JsonSerializer.Serialize(userchoices, jsonoptions);
+            string filepath = path + $@"\user.json";
+            File.WriteAllText(filepath, jsonString);
+            Utilities.ParallelLogger.Log($"[INFO] user.json written to {filepath}.");
             Close();
         }
     }
