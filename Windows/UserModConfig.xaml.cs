@@ -238,9 +238,6 @@ namespace AemulusModManager.Windows
                 DropBoxContainer.Children.Clear();
                 BackButton.IsEnabled = true;
                 configpage += 1;
-                Utilities.ParallelLogger.Log($"[DEBUG] Number of indecies in json = {storedpages.Count}.");
-                Utilities.ParallelLogger.Log($"[DEBUG] 'Page' Number = {configpage}.");
-                Utilities.ParallelLogger.Log($"[DEBUG] Index Number = {index}.");
                 if (storedpages.Count == configpage || storedpages.Count < configpage)
                     NextButton.IsEnabled = false;
                 NameText.Text = $"{storedpages[index].optionname}";
