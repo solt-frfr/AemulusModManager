@@ -363,9 +363,6 @@ namespace AemulusModManager.Windows
                 this.SizeToContent = SizeToContent.WidthAndHeight;
                 if (configpage == 1)
                     BackButton.IsEnabled = false;
-                Utilities.ParallelLogger.Log($"[DEBUG] Number of indecies in json = {storedpages.Count}.");
-                Utilities.ParallelLogger.Log($"[DEBUG] 'Page' Number = {configpage}.");
-                Utilities.ParallelLogger.Log($"[DEBUG] Index Number = {index}.");
                 NameText.Text = $"{storedpages[index].optionname}";
                 DescBox.Text = $"{storedpages[index].description}";
                 string previewpath = $@"{System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Packages\{cfgmetadata.modgame}\{cfgmetadata.modpath}\Preview{configpage}.png";
