@@ -2450,6 +2450,7 @@ namespace AemulusModManager
                                     for (int ii = userchoices[i].Count - 1; ii >= 0; ii--)
                                     {
                                         packages.Add($@"{Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Packages\{game}\{m.path}\modconfig\config{i}\{userchoices[i][ii]}");
+                                    }
                                 }
                             }
                         }
