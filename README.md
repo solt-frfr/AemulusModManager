@@ -424,14 +424,23 @@ A tool has been provided for modders to add configurations, also availible by ri
 ```
 
 These variables may cause confusion, so here is what everything means.
+
 "optionname" is the name of your option.
+
 "optionnum" is how many choices your option contains.
+
 "description" is a description of how these choices affect the mod.
+
 "choice" is a list of choices. The number of them needs to match "optionnum".
+
 "type" tells the modder window how the choices should be presented. You can choose from the following options:
+```
   0 = pick one
+
   1 = pick multiple
+
   2 = dropdown menu, fuctionally the same as pick one but a lot cleaner for options with a lot of choices.
+```
 
 #### Folder Format
 
