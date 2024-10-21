@@ -279,8 +279,7 @@ namespace AemulusModManager
         public string name { get; set; }
         public string modpath { get; set; }
         public string modgame { get; set; }
-        public string optionname { get; set; }
-        public string description { get; set; }
+        public string modid { get; set; }
     }
 
     [Serializable, XmlRoot("Mod")]

@@ -28,10 +28,13 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Xml.Serialization;
 using Vlc.DotNet.Core;
 using WpfAnimatedGif;
 using TypeFilter = AemulusModManager.Utilities.TypeFilter;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace AemulusModManager
 {
@@ -2405,6 +2408,26 @@ namespace AemulusModManager
                 {
                     if (m.enabled)
                     {
+                        if (bottomUpPriority)
+                        {
+                            if (File.Exists($@"{System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Config\{game}\Mods\{m.id}.json"))
+                            {
+                                var jsonoptions = new JsonSerializerOptions
+                                {
+                                    WriteIndented = true
+                                };
+                                string jsonString = File.ReadAllText($@"{System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Config\{game}\Mods\{m.id}.json");
+                                List<List<int>> userchoices = System.Text.Json.JsonSerializer.Deserialize<List<List<int>>>(jsonString, jsonoptions);
+                                for (int i = 0; i < userchoices.Count; i++)
+                                {
+                                    for (int ii = 0; ii < userchoices[i].Count; ii++)
+                                    {
+                                        packages.Add($@"{Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Packages\{game}\{m.path}\modconfig\config{i}\{userchoices[i][ii]}");
+                                        Utilities.ParallelLogger.Log($@"[DEBUG] Added {Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Packages\{game}\{m.path}\modconfig\config{i}\{userchoices[i][ii]}");
+                                    }
+                                }
+                            }
+                        }
                         packages.Add($@"{Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Packages\{game}\{m.path}");
                         Utilities.ParallelLogger.Log($@"[INFO] Using {m.path} in loadout");
                         if (game == "Persona 4 Golden" && (Directory.Exists($@"{Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Packages\{game}\{m.path}\{Path.GetFileNameWithoutExtension(cpkLang)}")
@@ -2412,6 +2435,26 @@ namespace AemulusModManager
                         {
                             Utilities.ParallelLogger.Log($"[WARNING] {m.path} is using CPK folder paths, setting Use CPK Structure to true");
                             useCpk = true;
+                        }
+                        if (!bottomUpPriority)
+                        {
+                            if (File.Exists($@"{System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Config\{game}\Mods\{m.id}.json"))
+                            {
+                                var jsonoptions = new JsonSerializerOptions
+                                {
+                                    WriteIndented = true
+                                };
+                                string jsonString = File.ReadAllText($@"{System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Config\{game}\Mods\{m.id}.json");
+                                List<List<int>> userchoices = System.Text.Json.JsonSerializer.Deserialize<List<List<int>>>(jsonString, jsonoptions);
+                                for (int i = userchoices.Count - 1; i >= 0; i--)
+                                {
+                                    for (int ii = userchoices[i].Count - 1; ii >= 0; ii--)
+                                    {
+                                        packages.Add($@"{Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Packages\{game}\{m.path}\modconfig\config{i}\{userchoices[i][ii]}");
+                                        Utilities.ParallelLogger.Log($@"[DEBUG] Added {Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Packages\{game}\{m.path}\modconfig\config{i}\{userchoices[i][ii]}");
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -2693,12 +2736,6 @@ namespace AemulusModManager
                                         break;
                                 }
                             tblPatch.Patch(packages, path, useCpk, tbllanguage, game);
-                        }
-
-                        // Only run if mod configuration options exist
-                        if (packages.Exists(x => Directory.Exists($@"{x}\modconfig")))
-                        {
-                            
                         }
 
                         if (game == "Persona 3 FES" && packages.Exists(x => Directory.Exists($@"{x}\cheats")))
@@ -3238,6 +3275,7 @@ namespace AemulusModManager
                     mm.name = row.name;
                     mm.modgame = game;
                     mm.modpath = row.path;
+                    mm.modid = row.id;
                     UserModConfig mcfg = new UserModConfig(mm);
                     try
                     {

@@ -71,7 +71,7 @@ namespace AemulusModManager.Windows
             configpage = 1;
             string path = $@"{System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Packages\{cfgmetadata.modgame}\{cfgmetadata.modpath}";
             string jsonpath = path + $@"\config.json";
-            string userpath = path + $@"\user.json";
+            string userpath = $@"{System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Config\{cfgmetadata.modgame}\Mods\{cfgmetadata.modid}.json";
             string previewpath = path + $@"\Preview{configpage}.png";
             if (File.Exists(previewpath))
             {
@@ -81,7 +81,7 @@ namespace AemulusModManager.Windows
                 preview.EndInit();
                 Preview.Source = preview;
             }
-            if (File.Exists(jsonpath))
+            if (File.Exists(userpath))
             {
                 var jsonoptions = new JsonSerializerOptions
                 {
@@ -486,11 +486,13 @@ namespace AemulusModManager.Windows
             {
                 WriteIndented = true
             };
-            string path = $@"{System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Packages\{cfgmetadata.modgame}\{cfgmetadata.modpath}";
+            string path = $@"{System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Config\{cfgmetadata.modgame}\Mods";
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
             string jsonString = JsonSerializer.Serialize(userchoices, jsonoptions);
-            string filepath = path + $@"\user.json";
+            string filepath = path + $@"\{cfgmetadata.modid}.json";
             File.WriteAllText(filepath, jsonString);
-            Utilities.ParallelLogger.Log($"[INFO] user.json written to {filepath}.");
+            Utilities.ParallelLogger.Log($"[INFO] {cfgmetadata.modid}.json written to {filepath}.");
             Close();
         }
     }
