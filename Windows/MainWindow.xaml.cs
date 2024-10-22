@@ -2408,7 +2408,7 @@ namespace AemulusModManager
                 {
                     if (m.enabled)
                     {
-                        if (bottomUpPriority)
+                        if (!bottomUpPriority)
                         {
                             if (File.Exists($@"{System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Config\{game}\Mods\{m.id}.json"))
                             {
@@ -2435,7 +2435,7 @@ namespace AemulusModManager
                             Utilities.ParallelLogger.Log($"[WARNING] {m.path} is using CPK folder paths, setting Use CPK Structure to true");
                             useCpk = true;
                         }
-                        if (!bottomUpPriority)
+                        if (bottomUpPriority)
                         {
                             if (File.Exists($@"{System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Config\{game}\Mods\{m.id}.json"))
                             {
