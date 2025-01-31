@@ -35,6 +35,7 @@ namespace AemulusModManager
             DeleteBox.IsChecked = main.config.p5rSwitchConfig.deleteOldVersions;
             UpdateAllBox.IsChecked = main.config.p5rSwitchConfig.updateAll;
             UpdateBox.IsChecked = main.config.p5rSwitchConfig.updatesEnabled;
+            HoldenBox.IsChecked = main.config.p5rSwitchConfig.holdenEnabled;
             switch (main.config.p5rSwitchConfig.language)
             {
                 case "English":
@@ -52,6 +53,10 @@ namespace AemulusModManager
                 case "Spanish":
                     LanguageBox.SelectedIndex = 4;
                     break;
+            }
+            if (main.config.p5rSwitchConfig.holdenEnabled)
+            {
+                OutputTextblock.Text = "Holden Switch\nFolder";
             }
             Utilities.ParallelLogger.Log("[INFO] Config launched");
         }
@@ -193,6 +198,20 @@ namespace AemulusModManager
             main.deleteOldVersions = false;
             main.config.p5rSwitchConfig.deleteOldVersions = false;
             main.updateConfig();
+        }
+        private void HoldenChecked(object sender, RoutedEventArgs e)
+        {
+            main.holdenEnabled = true;
+            main.config.p5rSwitchConfig.holdenEnabled = true;
+            main.updateConfig();
+            OutputTextblock.Text = "Holden Switch\nFolder";
+        }
+        private void HoldenUnhecked(object sender, RoutedEventArgs e)
+        {
+            main.holdenEnabled = false;
+            main.config.p5rSwitchConfig.holdenEnabled = false;
+            main.updateConfig();
+            OutputTextblock.Text = "Output Folder";
         }
 
         private void onClose(object sender, CancelEventArgs e)

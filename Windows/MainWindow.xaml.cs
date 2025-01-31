@@ -64,6 +64,7 @@ namespace AemulusModManager
         public bool useCpk;
         public bool buildWarning;
         public bool buildFinished;
+        public bool holdenEnabled;
         public bool updateChangelog;
         public bool updateAll;
         public bool updatesEnabled;
@@ -559,6 +560,7 @@ namespace AemulusModManager
                                     updateAll = config.p5rSwitchConfig.updateAll;
                                     updatesEnabled = config.p5rSwitchConfig.updatesEnabled;
                                     deleteOldVersions = config.p5rSwitchConfig.deleteOldVersions;
+                                    holdenEnabled = config.p5rSwitchConfig.holdenEnabled;
                                     useCpk = false;
                                     createIso = false;
                                     ConvertCPK.Visibility = Visibility.Collapsed;
@@ -2496,10 +2498,36 @@ namespace AemulusModManager
                     }
                     if (game == "Persona 5 Royal (Switch)")
                     {
-                        path = $@"{modPath}\mods\romfs\CPK\PATCH1";
-                        Directory.CreateDirectory(path);
-                        if (File.Exists($@"{modPath}\mods\romfs\CPK\PATCH1.CPK"))
-                            File.Delete($@"{modPath}\mods\romfs\CPK\PATCH1.CPK");
+                        if (holdenEnabled)
+                        {
+                            path = $@"{modPath}\p5rnxaem\01005CA01580E000\romfs\CPK\PATCH1";
+                            Directory.CreateDirectory(path);
+                            if (File.Exists($@"{modPath}\p5rnxaem\01005CA01580E000\romfs\CPK\PATCH1.CPK"))
+                                File.Delete($@"{modPath}\p5rnxaem\01005CA01580E000\romfs\CPK\PATCH1.CPK");
+                            string filePath = $@"{modPath}\p5rnxaem\holden.json"; // Honestly I'm too lazy to implement Holden's features so I'm just making a json from scratch
+                            if (File.Exists(filePath))
+                                File.Delete(filePath);
+                            using (StreamWriter writer = new StreamWriter(filePath))
+                            {
+                                writer.WriteLine("{");
+                                writer.WriteLine($"  \"Name\": \"Aemulus Output (P5R)\",");
+                                writer.WriteLine($"  \"Game\": \"Persona 5 Royal\",");
+                                writer.WriteLine($"  \"Link\": \"https://github.com/TekkaGB/AemulusModManager/releases\",");
+                                writer.WriteLine($"  \"ID\": \"p5rnxaem\",");
+                                writer.WriteLine($"  \"Tags\": [");
+                                writer.WriteLine($"    \"External Manager\"");
+                                writer.WriteLine($"  ]");
+                                writer.Write("}");
+                                AemulusModManager.Utilities.ParallelLogger.Log($"[INFO] holden.json written to {filePath}.");
+                            }
+                        }
+                        else
+                        {
+                            path = $@"{modPath}\mods\romfs\CPK\PATCH1";
+                            Directory.CreateDirectory(path);
+                            if (File.Exists($@"{modPath}\mods\romfs\CPK\PATCH1.CPK"))
+                                File.Delete($@"{modPath}\mods\romfs\CPK\PATCH1.CPK");
+                        }
                     }
 
                     if (!Directory.EnumerateFileSystemEntries(path).Any() && game != "Persona 5 Strikers")
@@ -2615,8 +2643,33 @@ namespace AemulusModManager
                     }
                     if (game == "Persona 5 Royal (Switch)")
                     {
-                        path = $@"{modPath}\mods\romfs\CPK\PATCH1";
-                        Directory.CreateDirectory(path);
+                        if (holdenEnabled)
+                        {
+                            path = $@"{modPath}\p5rnxaem\01005CA01580E000\romfs\CPK\PATCH1";
+                            Directory.CreateDirectory(path);
+                            string filePath = $@"{modPath}\p5rnxaem\holden.json"; // Honestly I'm too lazy to implement Holden's features so I'm just making a json from scratch
+                            if (File.Exists(filePath))
+                                File.Delete(filePath);
+                            using (StreamWriter writer = new StreamWriter(filePath))
+                            {
+                                writer.WriteLine("{");
+                                writer.WriteLine($"  \"Name\": \"Aemulus Output (P5R)\",");
+                                writer.WriteLine($"  \"Game\": \"Persona 5 Royal\",");
+                                writer.WriteLine($"  \"Link\": \"https://github.com/TekkaGB/AemulusModManager/releases\",");
+                                writer.WriteLine($"  \"ID\": \"p5rnxaem\",");
+                                writer.WriteLine($"  \"Tags\": [");
+                                writer.WriteLine($"    \"External Manager\"");
+                                writer.WriteLine($"  ]");
+                                writer.Write("}");
+                                AemulusModManager.Utilities.ParallelLogger.Log($"[INFO] holden.json written to {filePath}.");
+                            }
+                        }
+                        else
+                        {
+
+                            path = $@"{modPath}\mods\romfs\CPK\PATCH1";
+                            Directory.CreateDirectory(path);
+                        }
                     }
                     if (buildWarning && Directory.EnumerateFileSystemEntries(path).Any())
                     {

@@ -23,7 +23,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Foreground="LightGray" TextAlignment="Center" Text="Output Folder" VerticalAlignment="Center" FontWeight="Bold" FontSize="13" Grid.Column="1" Grid.Row="1" Height="20"/>
+        <TextBlock Foreground="LightGray" TextAlignment="Center" Text="Output Folder" Name="OutputTextblock" VerticalAlignment="Center" FontWeight="Bold" FontSize="13" Grid.Column="1" Grid.Row="1" Height="auto" TextWrapping="WrapWithOverflow"/>
         <TextBlock Foreground="LightGray" Text="P5R (Switch) Launch Shortcut Setup" FontWeight="Bold" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center" Height="20" Grid.Row="2" Grid.Column="2"/>
         <TextBlock Foreground="LightGray" TextAlignment="Center" Text="P5R Rom Path" VerticalAlignment="Center" FontWeight="Bold" FontSize="13" Grid.Column="1" Grid.Row="3" Height="20"/>
         <TextBlock Foreground="LightGray" TextAlignment="Center" FontWeight="Bold" FontSize="13" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center">Emulator Path</TextBlock>
@@ -35,6 +35,7 @@
         <Button Height="20" Width="60" Content="Browse" Name="EmulatorButton" Click="SetupEmulatorShortcut" Background ="White" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="4" Grid.Column="3" />
         <Grid Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="3">
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
@@ -81,6 +82,14 @@
                     <TextBlock TextAlignment="Center">
                         Update All<LineBreak/>
                         On Refresh
+                    </TextBlock>
+                </CheckBox>
+            </Viewbox>
+            <Viewbox Stretch="Uniform" VerticalAlignment="Center" MinHeight="35" MaxHeight="35" Width="100" Grid.Column="6">
+                <CheckBox Name="HoldenBox" Foreground ="White" Checked="HoldenChecked" Unchecked="HoldenUnhecked">
+                    <TextBlock TextAlignment="Center">
+                        Holden<LineBreak/>
+                        Support
                     </TextBlock>
                 </CheckBox>
             </Viewbox>
