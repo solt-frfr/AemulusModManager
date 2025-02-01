@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Linq;
+using System.Reflection.Metadata;
 
 namespace AemulusModManager
 {
@@ -17,6 +18,7 @@ namespace AemulusModManager
     {
         private MainWindow main;
         private bool language_handled;
+        private bool handled;
 
         public ConfigWindowP3PSwitch(MainWindow _main)
         {
@@ -51,6 +53,18 @@ namespace AemulusModManager
                     break;
                 case "Spanish":
                     LanguageBox.SelectedIndex = 4;
+                    break;
+            }
+            switch (main.config.p3pSwitchConfig.cpkName)
+            {
+                case "mod.cpk":
+                    CPKBox.SelectedIndex = 0;
+                    break;
+                case "mod_extra.cpk":
+                    CPKBox.SelectedIndex = 1;
+                    break;
+                case "mod_bgm.cpk":
+                    CPKBox.SelectedIndex = 2;
                     break;
             }
             Utilities.ParallelLogger.Log("[INFO] Config launched");
@@ -293,6 +307,27 @@ namespace AemulusModManager
                     main.updateConfig();
                 }
                 language_handled = false;
+            }
+        }
+        private void CPKBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (!IsLoaded)
+                return;
+            handled = true;
+        }
+
+        private void CPKBox_DropDownClosed(object sender, EventArgs e)
+        {
+            if (handled)
+            {
+                var cpkName = (CPKBox.SelectedValue as ComboBoxItem).Content as String;
+                if (main.config.p3pSwitchConfig.cpkName != cpkName)
+                {
+                    Utilities.ParallelLogger.Log($"[INFO] Output changed to {cpkName}");
+                    main.config.p3pSwitchConfig.cpkName = cpkName;
+                    main.updateConfig();
+                }
+                handled = false;
             }
         }
     }
