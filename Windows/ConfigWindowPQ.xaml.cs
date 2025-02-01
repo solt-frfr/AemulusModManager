@@ -28,6 +28,14 @@ namespace AemulusModManager
                 ROMTextbox.Text = main.gamePath;
             if (main.launcherPath != null)
                 CitraTextbox.Text = main.launcherPath;
+            if (main.titleID != null)
+                TitleIDBox.Text = main.titleID;
+            else
+            {
+                main.titleID = "0004000000123400";
+                main.config.pqConfig.titleID = "0004000000123400";
+                TitleIDBox.Text = main.titleID;
+            }
             BuildFinishedBox.IsChecked = main.config.pqConfig.buildFinished;
             BuildWarningBox.IsChecked = main.config.pqConfig.buildWarning;
             ChangelogBox.IsChecked = main.config.pqConfig.updateChangelog;

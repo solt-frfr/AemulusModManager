@@ -2464,7 +2464,7 @@ namespace AemulusModManager
                                 writer.WriteLine("{");
                                 writer.WriteLine($"  \"Name\": \"Aemulus Output (P3P)\",");
                                 writer.WriteLine($"  \"Game\": \"Persona 3 Portable\",");
-                                writer.WriteLine($"  \"Link\": \"{Assembly.GetExecutingAssembly().Location}\",");
+                                writer.WriteLine($"  \"Link\": \"https://github.com/TekkaGB/AemulusModManager/releases\",");
                                 writer.WriteLine($"  \"ID\": \"p3pnxaem\",");
                                 writer.WriteLine($"  \"Tags\": [");
                                 writer.WriteLine($"    \"External Manager\"");
@@ -2512,7 +2512,7 @@ namespace AemulusModManager
                                 writer.WriteLine("{");
                                 writer.WriteLine($"  \"Name\": \"Aemulus Output (PQ2)\",");
                                 writer.WriteLine($"  \"Game\": \"Persona Q2\",");
-                                writer.WriteLine($"  \"Link\": \"{Assembly.GetExecutingAssembly().Location}\",");
+                                writer.WriteLine($"  \"Link\": \"https://github.com/TekkaGB/AemulusModManager/releases\",");
                                 writer.WriteLine($"  \"ID\": \"pq2aem\",");
                                 writer.WriteLine($"  \"Tags\": [");
                                 writer.WriteLine($"    \"External Manager\"");
@@ -2545,7 +2545,7 @@ namespace AemulusModManager
                                 writer.WriteLine("{");
                                 writer.WriteLine($"  \"Name\": \"Aemulus Output (PQ)\",");
                                 writer.WriteLine($"  \"Game\": \"Persona Q\",");
-                                writer.WriteLine($"  \"Link\": \"{Assembly.GetExecutingAssembly().Location}\",");
+                                writer.WriteLine($"  \"Link\": \"https://github.com/TekkaGB/AemulusModManager/releases\",");
                                 writer.WriteLine($"  \"ID\": \"pqaem\",");
                                 writer.WriteLine($"  \"Tags\": [");
                                 writer.WriteLine($"    \"External Manager\"");
@@ -2603,7 +2603,7 @@ namespace AemulusModManager
                                 writer.WriteLine("{");
                                 writer.WriteLine($"  \"Name\": \"Aemulus Output (P5R)\",");
                                 writer.WriteLine($"  \"Game\": \"Persona 5 Royal\",");
-                                writer.WriteLine($"  \"Link\": \"{Assembly.GetExecutingAssembly().Location}\",");
+                                writer.WriteLine($"  \"Link\": \"https://github.com/TekkaGB/AemulusModManager/releases\",");
                                 writer.WriteLine($"  \"ID\": \"p5rnxaem\",");
                                 writer.WriteLine($"  \"Tags\": [");
                                 writer.WriteLine($"    \"External Manager\"");
@@ -2708,7 +2708,7 @@ namespace AemulusModManager
                                 writer.WriteLine("{");
                                 writer.WriteLine($"  \"Name\": \"Aemulus Output (P3P)\",");
                                 writer.WriteLine($"  \"Game\": \"Persona 3 Portable\",");
-                                writer.WriteLine($"  \"Link\": \"{Assembly.GetExecutingAssembly().Location}\",");
+                                writer.WriteLine($"  \"Link\": \"https://github.com/TekkaGB/AemulusModManager/releases\",");
                                 writer.WriteLine($"  \"ID\": \"p3pnxaem\",");
                                 writer.WriteLine($"  \"Tags\": [");
                                 writer.WriteLine($"    \"External Manager\"");
@@ -2742,7 +2742,7 @@ namespace AemulusModManager
                                 writer.WriteLine("{");
                                 writer.WriteLine($"  \"Name\": \"Aemulus Output (PQ2)\",");
                                 writer.WriteLine($"  \"Game\": \"Persona Q2\",");
-                                writer.WriteLine($"  \"Link\": \"{Assembly.GetExecutingAssembly().Location}\",");
+                                writer.WriteLine($"  \"Link\": \"https://github.com/TekkaGB/AemulusModManager/releases\",");
                                 writer.WriteLine($"  \"ID\": \"pq2aem\",");
                                 writer.WriteLine($"  \"Tags\": [");
                                 writer.WriteLine($"    \"External Manager\"");
@@ -2771,7 +2771,7 @@ namespace AemulusModManager
                                 writer.WriteLine("{");
                                 writer.WriteLine($"  \"Name\": \"Aemulus Output (PQ)\",");
                                 writer.WriteLine($"  \"Game\": \"Persona Q\",");
-                                writer.WriteLine($"  \"Link\": \"{Assembly.GetExecutingAssembly().Location}\",");
+                                writer.WriteLine($"  \"Link\": \"https://github.com/TekkaGB/AemulusModManager/releases\",");
                                 writer.WriteLine($"  \"ID\": \"pqaem\",");
                                 writer.WriteLine($"  \"Tags\": [");
                                 writer.WriteLine($"    \"External Manager\"");
@@ -2823,7 +2823,7 @@ namespace AemulusModManager
                                 writer.WriteLine("{");
                                 writer.WriteLine($"  \"Name\": \"Aemulus Output (P5R)\",");
                                 writer.WriteLine($"  \"Game\": \"Persona 5 Royal\",");
-                                writer.WriteLine($"  \"Link\": \"{Assembly.GetExecutingAssembly().Location}\",");
+                                writer.WriteLine($"  \"Link\": \"https://github.com/TekkaGB/AemulusModManager/releases\",");
                                 writer.WriteLine($"  \"ID\": \"p5rnxaem\",");
                                 writer.WriteLine($"  \"Tags\": [");
                                 writer.WriteLine($"    \"External Manager\"");

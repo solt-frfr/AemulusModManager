@@ -28,6 +28,14 @@ namespace AemulusModManager
                 ROMTextbox.Text = main.gamePath;
             if (main.launcherPath != null)
                 CitraTextbox.Text = main.launcherPath;
+            if (main.titleID != null)
+                TitleIDBox.Text = main.titleID;
+            else
+            {
+                main.titleID = "00040000001D7100";
+                main.config.pq2Config.titleID = "00040000001D7100";
+                TitleIDBox.Text = main.titleID;
+            }
             BuildFinishedBox.IsChecked = main.config.pq2Config.buildFinished;
             BuildWarningBox.IsChecked = main.config.pq2Config.buildWarning;
             ChangelogBox.IsChecked = main.config.pq2Config.updateChangelog;
@@ -276,15 +284,15 @@ namespace AemulusModManager
                 var language = (LanguageBox.SelectedValue as ComboBoxItem).Content as String;
                 if (language.Contains("North America"))
                 {
-                    language = "0004000000123400";
+                    language = "00040000001D7100";
                 }
                 else if (language.Contains("Europe"))
                 {
-                    language = "0004000000149F00";
+                    language = "00040000001D7600";
                 }
                 else if (language.Contains("Japan"))
                 {
-                    language = "00040000000C3600";
+                    language = "00040000001CBE00";
                 }
                 if (main.config.pq2Config.titleID != language)
                 {
