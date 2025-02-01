@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AemulusModManager"
         mc:Ignorable="d" WindowStartupLocation="CenterOwner"
-        Title="Persona 3 Portable (Switch) Config" Height="250" Width="800" ResizeMode="NoResize" Background="#121212" Closing="onClose">
+        Title="Persona 3 Portable (Switch) Config" Height="300" Width="800" ResizeMode="NoResize" Background="#121212" Closing="onClose">
     <Grid Margin="0,0,0,0">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="10"/>
@@ -19,6 +19,8 @@
             <RowDefinition Height="18"/>
             <RowDefinition Height="40"/>
             <RowDefinition Height="40"/>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="10"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
@@ -35,8 +37,6 @@
         <Button Height="20" Width="60" Content="Browse" Name="EmulatorButton" Click="SetupEmulatorShortcut" Background ="White" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="4" Grid.Column="3" />
         <Grid Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="3">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
@@ -61,6 +61,20 @@
                 </ComboBox>
             </Viewbox>
             <Viewbox Stretch="Uniform" VerticalAlignment="Center" MinHeight="35" MaxHeight="35" Width="100" Grid.Column="3">
+                <ComboBox x:Name="CPKBox" Width="120" FontSize="15" Text="Notifications" SelectedIndex="0" SelectionChanged="CPKBox_SelectionChanged" DropDownClosed="CPKBox_DropDownClosed">
+                    <ComboBoxItem IsSelected="True" Foreground="#f2f2f2" Content="mod.cpk"/>
+                    <ComboBoxItem Foreground="#f2f2f2" Content="mod_extra.cpk"/>
+                    <ComboBoxItem Foreground="#f2f2f2" Content="mod_bgm.cpk"/>
+                </ComboBox>
+            </Viewbox>
+        </Grid>
+        <Grid Grid.Row="8" Grid.Column="1" Grid.ColumnSpan="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Viewbox Stretch="Uniform" VerticalAlignment="Center" MinHeight="35" MaxHeight="35" Width="100" Grid.Column="0">
                 <CheckBox Name="DeleteBox" Foreground ="White" Checked="DeleteChecked" Unchecked="DeleteUnchecked">
                     <TextBlock TextAlignment="Center">
                         Delete Old<LineBreak/>
@@ -68,7 +82,7 @@
                     </TextBlock>
                 </CheckBox>
             </Viewbox>
-            <Viewbox Stretch="Uniform" VerticalAlignment="Center" MinHeight="35" MaxHeight="35" Width="100" Grid.Column="4">
+            <Viewbox Stretch="Uniform" VerticalAlignment="Center" MinHeight="35" MaxHeight="35" Width="100" Grid.Column="1">
                 <CheckBox Name="UpdateBox" Foreground ="White" Checked="UpdateChecked" Unchecked="UpdateUnchecked">
                     <TextBlock TextAlignment="Center">
                         Enable Mod<LineBreak/>
@@ -76,7 +90,7 @@
                     </TextBlock>
                 </CheckBox>
             </Viewbox>
-            <Viewbox Stretch="Uniform" VerticalAlignment="Center" MinHeight="35" MaxHeight="35" Width="100" Grid.Column="5">
+            <Viewbox Stretch="Uniform" VerticalAlignment="Center" MinHeight="35" MaxHeight="35" Width="100" Grid.Column="2">
                 <CheckBox Name="UpdateAllBox" Foreground ="White" Checked="UpdateAllChecked" Unchecked="UpdateAllUnchecked" IsEnabled="False">
                     <TextBlock TextAlignment="Center">
                         Update All<LineBreak/>
