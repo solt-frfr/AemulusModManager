@@ -37,6 +37,7 @@ namespace AemulusModManager
             DeleteBox.IsChecked = main.config.p3pSwitchConfig.deleteOldVersions;
             UpdateAllBox.IsChecked = main.config.p3pSwitchConfig.updateAll;
             UpdateBox.IsChecked = main.config.p3pSwitchConfig.updatesEnabled;
+            HoldenBox.IsChecked = main.config.p3pSwitchConfig.holdenEnabled;
             switch (main.config.p3pSwitchConfig.language)
             {
                 case "English":
@@ -66,6 +67,10 @@ namespace AemulusModManager
                 case "mod_bgm.cpk":
                     CPKBox.SelectedIndex = 2;
                     break;
+            }
+            if (main.config.p3pSwitchConfig.holdenEnabled)
+            {
+                OutputTextblock.Text = "Holden Switch\nFolder";
             }
             Utilities.ParallelLogger.Log("[INFO] Config launched");
         }
@@ -207,6 +212,20 @@ namespace AemulusModManager
             main.deleteOldVersions = false;
             main.config.p3pSwitchConfig.deleteOldVersions = false;
             main.updateConfig();
+        }
+        private void HoldenChecked(object sender, RoutedEventArgs e)
+        {
+            main.holdenEnabled = true;
+            main.config.p3pSwitchConfig.holdenEnabled = true;
+            main.updateConfig();
+            OutputTextblock.Text = "Holden Switch\nFolder";
+        }
+        private void HoldenUnhecked(object sender, RoutedEventArgs e)
+        {
+            main.holdenEnabled = false;
+            main.config.p3pSwitchConfig.holdenEnabled = false;
+            main.updateConfig();
+            OutputTextblock.Text = "Output Folder";
         }
 
         private void onClose(object sender, CancelEventArgs e)

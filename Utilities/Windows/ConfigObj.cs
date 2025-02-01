@@ -220,6 +220,7 @@ namespace AemulusModManager
         public bool updateAll { get; set; } = true;
         public bool updatesEnabled { get; set; } = true;
         public bool holdenEnabled { get; set; } = false;
+        public string titleID { get; set; }
         public string loadout { get; set; }
         public string lastUnpacked { get; set; }
     }
@@ -236,6 +237,7 @@ namespace AemulusModManager
         public bool updateAll { get; set; } = true;
         public bool updatesEnabled { get; set; } = true;
         public bool holdenEnabled { get; set; } = false;
+        public string titleID { get; set; }
         public string loadout { get; set; }
         public string lastUnpacked { get; set; }
     }

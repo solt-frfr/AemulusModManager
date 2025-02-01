@@ -25,7 +25,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Foreground="LightGray" TextAlignment="Center" Text="Output Folder" VerticalAlignment="Center" FontWeight="Bold" FontSize="13" Grid.Column="1" Grid.Row="1" Height="20"/>
+        <TextBlock Foreground="LightGray" TextAlignment="Center" Text="Output Folder" Name="OutputTextblock" VerticalAlignment="Center" FontWeight="Bold" FontSize="13" Grid.Column="1" Grid.Row="1" Height="auto" TextWrapping="WrapWithOverflow"/>
         <TextBlock Foreground="LightGray" Text="P3P (Switch) Launch Shortcut Setup" FontWeight="Bold" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center" Height="20" Grid.Row="2" Grid.Column="2"/>
         <TextBlock Foreground="LightGray" TextAlignment="Center" Text="P3P Rom Path" VerticalAlignment="Center" FontWeight="Bold" FontSize="13" Grid.Column="1" Grid.Row="3" Height="20"/>
         <TextBlock Foreground="LightGray" TextAlignment="Center" FontWeight="Bold" FontSize="13" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center">Emulator Path</TextBlock>
@@ -73,6 +73,7 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Viewbox Stretch="Uniform" VerticalAlignment="Center" MinHeight="35" MaxHeight="35" Width="100" Grid.Column="0">
                 <CheckBox Name="DeleteBox" Foreground ="White" Checked="DeleteChecked" Unchecked="DeleteUnchecked">
@@ -95,6 +96,14 @@
                     <TextBlock TextAlignment="Center">
                         Update All<LineBreak/>
                         On Refresh
+                    </TextBlock>
+                </CheckBox>
+            </Viewbox>
+            <Viewbox Stretch="Uniform" VerticalAlignment="Center" MinHeight="35" MaxHeight="35" Width="100" Grid.Column="3">
+                <CheckBox Name="HoldenBox" Foreground ="White" Checked="HoldenChecked" Unchecked="HoldenUnhecked">
+                    <TextBlock TextAlignment="Center">
+                    Holden<LineBreak/>
+                    Support
                     </TextBlock>
                 </CheckBox>
             </Viewbox>

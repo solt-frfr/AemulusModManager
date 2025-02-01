@@ -15,6 +15,7 @@ namespace AemulusModManager
     public partial class ConfigWindowPQ : Window
     {
         private MainWindow main;
+        private bool language_handled;
 
         public ConfigWindowPQ(MainWindow _main)
         {
@@ -33,6 +34,21 @@ namespace AemulusModManager
             DeleteBox.IsChecked = main.config.pqConfig.deleteOldVersions;
             UpdateAllBox.IsChecked = main.config.pqConfig.updateAll;
             UpdateBox.IsChecked = main.config.pqConfig.updatesEnabled;
+            HoldenBox.IsChecked = main.config.pqConfig.holdenEnabled;
+            if (main.config.pqConfig.holdenEnabled)
+            {
+                LanguageBox.Visibility = Visibility.Visible;
+                TitleIDBox.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                LanguageBox.Visibility = Visibility.Collapsed;
+                TitleIDBox.Visibility = Visibility.Collapsed;
+            }
+            if (main.config.pqConfig.holdenEnabled)
+            {
+                OutputTextblock.Text = "Holden 3DS\nFolder";
+            }
             Utilities.ParallelLogger.Log("[INFO] Config launched");
         }
         private void modDirectoryClick(object sender, RoutedEventArgs e)
@@ -125,6 +141,24 @@ namespace AemulusModManager
             main.deleteOldVersions = false;
             main.config.pqConfig.deleteOldVersions = false;
             main.updateConfig();
+        }
+        private void HoldenChecked(object sender, RoutedEventArgs e)
+        {
+            main.holdenEnabled = true;
+            main.config.pqConfig.holdenEnabled = true;
+            main.updateConfig();
+            OutputTextblock.Text = "Holden 3DS\nFolder";
+            LanguageBox.Visibility = Visibility.Visible;
+            TitleIDBox.Visibility = Visibility.Visible;
+        }
+        private void HoldenUnhecked(object sender, RoutedEventArgs e)
+        {
+            main.holdenEnabled = false;
+            main.config.pqConfig.holdenEnabled = false;
+            main.updateConfig();
+            OutputTextblock.Text = "Output Folder";
+            LanguageBox.Visibility = Visibility.Collapsed;
+            TitleIDBox.Visibility = Visibility.Collapsed;
         }
 
         private void onClose(object sender, CancelEventArgs e)
@@ -227,6 +261,40 @@ namespace AemulusModManager
         private void NotifBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             NotifBox.SelectedIndex = 0;
+        }
+        private void LanguageBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (!IsLoaded)
+                return;
+            language_handled = true;
+        }
+
+        private void LanguageBox_DropDownClosed(object sender, EventArgs e)
+        {
+            if (language_handled)
+            {
+                var language = (LanguageBox.SelectedValue as ComboBoxItem).Content as String;
+                if (language.Contains("North America"))
+                {
+                    language = "0004000000123400";
+                }
+                else if (language.Contains("Europe"))
+                {
+                    language = "0004000000149F00";
+                }
+                else if (language.Contains("Japan"))
+                {
+                    language = "00040000000C3600";
+                }
+                if (main.config.pqConfig.titleID != language)
+                {
+                    Utilities.ParallelLogger.Log($"[INFO] TitleID changed to {language}");
+                    main.config.pqConfig.titleID = language;
+                    main.updateConfig();
+                }
+                TitleIDBox.Text = language;
+                language_handled = false;
+            }
         }
     }
 }
