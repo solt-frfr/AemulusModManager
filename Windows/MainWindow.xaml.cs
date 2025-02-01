@@ -472,6 +472,7 @@ namespace AemulusModManager
                                     updateAll = config.p3pSwitchConfig.updateAll;
                                     updatesEnabled = config.p3pSwitchConfig.updatesEnabled;
                                     deleteOldVersions = config.p3pSwitchConfig.deleteOldVersions;
+                                    holdenEnabled = config.p5rSwitchConfig.holdenEnabled;
                                     useCpk = false;
                                     createIso = false;
                                     ConvertCPK.Visibility = Visibility.Collapsed;
@@ -580,6 +581,7 @@ namespace AemulusModManager
                                     updateAll = config.pqConfig.updateAll;
                                     updatesEnabled = config.pqConfig.updatesEnabled;
                                     deleteOldVersions = config.pqConfig.deleteOldVersions;
+                                    holdenEnabled = config.pqConfig.holdenEnabled;
                                     useCpk = false;
                                     createIso = false;
                                     ConvertCPK.Visibility = Visibility.Collapsed;
@@ -597,6 +599,7 @@ namespace AemulusModManager
                                     updateAll = config.pq2Config.updateAll;
                                     updatesEnabled = config.pq2Config.updatesEnabled;
                                     deleteOldVersions = config.pq2Config.deleteOldVersions;
+                                    holdenEnabled = config.pq2Config.holdenEnabled;
                                     useCpk = false;
                                     createIso = false;
                                     ConvertCPK.Visibility = Visibility.Collapsed;
